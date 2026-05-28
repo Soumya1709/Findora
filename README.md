@@ -1,12 +1,7 @@
-# Findora
+# 🔍 Findora
 
-Campus Lost & Found Portal built with MERN Stack.
+### Where Lost Things Find Their Way Home
 
-## Tech Stack
-- React
-- Node.js
-- Express
-- MongoDB
+Campus Lost & Found Portal built using the MERN Stack.
 
-## Status
-🚧 Currently under development
+🚧 Currently under development.
