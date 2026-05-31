@@ -1,10 +1,18 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+
+import Home from "./pages/Home";
+
 function App() {
   return (
-    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
-      <h1 className="text-5xl font-bold text-blue-600">
-        Findora
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
