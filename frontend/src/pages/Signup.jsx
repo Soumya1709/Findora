@@ -1,10 +1,59 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
+import { signup } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+
+  try {
+    const payload = {
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    const response = await signup(payload);
+
+    alert("Account created successfully!");
+
+    console.log(response.data);
+
+    navigate("/login");
+  } catch (error) {
+    console.error("Signup failed:", error);
+
+    alert(
+      error?.response?.data?.message ||
+      "Signup failed"
+    );
+  }
+};
 
   return (
     <AuthLayout>
@@ -28,7 +77,7 @@ export default function Signup() {
       </div>
 
       {/* Form */}
-      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
 
         {/* Full Name */}
         <div className="group">
@@ -43,13 +92,15 @@ export default function Signup() {
               </svg>
             </span>
             <input
-              type="text"
-              placeholder="Alex Johnson"
-              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
-                         placeholder-gray-400 text-gray-900
-                         hover:border-blue-300 hover:bg-white
-                         focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100
-                         transition-all duration-200"
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="Alex Johnson"
+                className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
+                      placeholder-gray-400 text-gray-900 hover:border-blue-300 hover:bg-white
+                      focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100
+                       transition-all duration-200"
             />
           </div>
         </div>
@@ -69,6 +120,9 @@ export default function Signup() {
             <input
               type="email"
               placeholder="you@college.edu"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
                          placeholder-gray-400 text-gray-900
                          hover:border-blue-300 hover:bg-white
@@ -93,6 +147,9 @@ export default function Signup() {
             <input
               type={showPass ? "text" : "password"}
               placeholder="Min. 8 characters"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
                          placeholder-gray-400 text-gray-900
                          hover:border-blue-300 hover:bg-white
@@ -126,6 +183,9 @@ export default function Signup() {
             <input
               type={showConfirm ? "text" : "password"}
               placeholder="Re-enter your password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
                          placeholder-gray-400 text-gray-900
                          hover:border-blue-300 hover:bg-white

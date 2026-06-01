@@ -1,10 +1,52 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
+import { login } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [showPass, setShowPass] = useState(false);
+  const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+     email: "",
+     password: "",
+  });
+
+  const handleChange = (e) => {
+     setFormData({
+       ...formData,
+       [e.target.name]: e.target.value,
+     });
+  };
+
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await login(formData);
+
+    localStorage.setItem(
+      "token",
+      response.data.token
+    );
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
+
+    alert("Login Successful");
+
+    navigate("/dashboard");
+  } catch (error) {
+    alert(
+      error.response?.data?.message ||
+      "Login Failed"
+    );
+  }
+};
   return (
     <AuthLayout>
       {/* Tab switcher */}
@@ -27,7 +69,7 @@ export default function Login() {
       </div>
 
       {/* Form */}
-      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
 
         {/* Email */}
         <div className="group relative">
@@ -44,6 +86,9 @@ export default function Login() {
             <input
               type="email"
               placeholder="@ame@college.edu"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
                          placeholder-gray-400 text-gray-900
                          hover:border-blue-300 hover:bg-white
@@ -73,6 +118,9 @@ export default function Login() {
             <input
               type={showPass ? "text" : "password"}
               placeholder="••••••••"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50
                          placeholder-gray-400 text-gray-900
                          hover:border-blue-300 hover:bg-white
