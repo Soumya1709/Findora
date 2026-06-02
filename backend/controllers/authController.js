@@ -91,6 +91,9 @@ export const loginUser = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        isVerified: user.isVerified,
+        stats: user.stats,
+        createdAt: user.createdAt,
       },
     });
 
