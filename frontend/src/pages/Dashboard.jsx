@@ -1,5 +1,6 @@
 import { useState,useEffect} from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 /* ─── MOCK DATA ──────────────────────────────────────── */
 
@@ -310,6 +311,7 @@ const avatarInitials =
 /* ─── DASHBOARD CONTENT ──────────────────────────────── */
 function DashboardContent() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
 useEffect(() => {
   const storedUser = localStorage.getItem("user");
@@ -352,7 +354,7 @@ const isVerified = user?.isVerified || false;
             Here's what's happening with your items today.
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-blue-200 transition-all self-start sm:self-auto">
+        <button onClick={() => navigate("/report")} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-blue-200 transition-all self-start sm:self-auto">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
           </svg>
@@ -566,6 +568,7 @@ const isVerified = user?.isVerified || false;
 export default function Dashboard() {
   const [active, setActive] = useState("Dashboard");
   const [collapsed, setCollapsed] = useState(false);
+  
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
