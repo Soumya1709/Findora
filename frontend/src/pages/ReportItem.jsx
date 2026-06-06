@@ -35,6 +35,16 @@ const STEPS = ["General Details", "Location & Time", "Photos & Contact"];
 const NAV_LINKS = ["Browse", "Report", "Matching"];
 
 function Topbar() {
+  const user = JSON.parse(
+  localStorage.getItem("user") || "{}"
+);
+
+const initials =
+  user?.fullName
+    ?.split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase() || "U";
   return (
     <header className="h-13 bg-white border-b border-gray-100 flex items-center justify-between px-6 flex-shrink-0">
       <div className="flex items-center gap-6">
@@ -45,7 +55,7 @@ function Topbar() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <span className="font-extrabold text-gray-900 text-[15px]">CampusFound</span>
+          <span className="font-extrabold text-gray-900 text-[15px]">Findora</span>
         </div>
         <nav className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((l) => (
@@ -74,7 +84,7 @@ function Topbar() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </button>
-        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">AJ</div>
+        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">{initials}</div>
       </div>
     </header>
   );

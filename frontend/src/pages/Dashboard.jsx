@@ -97,6 +97,7 @@ function ConfidenceRing({ value }) {
 
 /* ─── SIDEBAR ────────────────────────────────────────── */
 const navItems = [
+  
   {
     label: "Dashboard",
     icon: (
@@ -108,6 +109,7 @@ const navItems = [
   },
   {
     label: "My Reports",
+    path: "/my-reports",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -166,6 +168,7 @@ const navItems = [
 ];
 
 function Sidebar({ active, setActive, collapsed, setCollapsed }) {
+  const navigate = useNavigate();
   return (
     <aside
       className={`${collapsed ? "w-16" : "w-60"} hidden md:flex flex-col bg-white border-r border-gray-100 transition-all duration-300 ease-in-out flex-shrink-0`}
@@ -188,7 +191,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
           return (
             <button
               key={item.label}
-              onClick={() => setActive(item.label)}
+              onClick={() => {setActive(item.label);navigate(item.path);}}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150
                 ${isActive
                   ? "bg-blue-50 text-blue-700"
