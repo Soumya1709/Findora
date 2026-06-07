@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ReportItem from "./pages/ReportItem";
 import MyReports from "./pages/MyReports";
+import BrowseItems from "./pages/BrowseItems";
 
 import Home from "./pages/Home";
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/report" element={<ReportItem />} />
         <Route path="/my-reports" element={<MyReports />} />
+        <Route path="/browse" element={<BrowseItems />} />
       </Routes>
     </BrowserRouter>
   );

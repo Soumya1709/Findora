@@ -334,7 +334,7 @@ function Footer() {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <span className="font-extrabold text-gray-900 text-sm">CampusFound</span>
+              <span className="font-extrabold text-gray-900 text-sm">Findora</span>
             </div>
             <p className="text-xs text-gray-400 leading-relaxed">
               Reconnecting the campus, one item at a time. Trusted by 20+ universities.
@@ -356,7 +356,7 @@ function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
-          © 2024 CampusFound Campus Recovery. All rights reserved.
+          © 2024 Findora Recovery Systems. All rights reserved.
         </div>
       </div>
     </footer>

@@ -130,6 +130,7 @@ const navItems = [
   },
   {
     label: "Browse Items",
+    path: "/browse",
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -181,7 +182,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        {!collapsed && <span className="font-extrabold text-gray-900 text-[15px] tracking-tight">CampusFound</span>}
+        {!collapsed && <span className="font-extrabold text-gray-900 text-[15px] tracking-tight">Findora</span>}
       </div>
 
       {/* Nav */}
@@ -271,7 +272,7 @@ const avatarInitials =
         </div>
         <div>
           <h1 className="text-sm font-bold text-gray-900">{active}</h1>
-          <p className="text-[11px] text-gray-400 hidden sm:block">CampusFound · Lost &amp; Found Portal</p>
+          <p className="text-[11px] text-gray-400 hidden sm:block">Findora · Lost &amp; Found Portal</p>
         </div>
       </div>
 
