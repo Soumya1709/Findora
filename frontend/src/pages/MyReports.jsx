@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getMyItems } from "../services/itemService";
+import { getMyItems,deleteItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
 
 /* ─── MOCK DATA ─────────────────────────────────────── */
@@ -179,7 +179,8 @@ const initials =
 }
 
 /* ─── ITEM CARD ─────────────────────────────────────── */
-function ItemCard({ item }) {
+function ItemCard({ item,onDelete }) {
+  
   if (item.archived) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden opacity-60 hover:opacity-80 transition-opacity">
@@ -206,6 +207,7 @@ function ItemCard({ item }) {
       </div>
     );
   }
+  
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
@@ -247,7 +249,7 @@ function ItemCard({ item }) {
               </button>
             )}
             {item.canDelete && (
-              <button className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Delete">
+              <button onClick={() => onDelete(item.id)} className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Delete" >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -366,7 +368,22 @@ function Footer() {
 /* ─── MAIN PAGE ─────────────────────────────────────── */
 export default function MyReports() {
   const [reports, setReports] = useState([]);
+  const navigate = useNavigate();
   const totalReports = reports.length;
+  const handleDelete = async (id) => {
+  try {
+    await deleteItem(id);
+
+    setReports((prev) =>
+      prev.filter((item) => item.id !== id)
+    );
+
+    alert("Item deleted successfully");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete item");
+  }
+};
 
 const activeReports = reports.filter(
   (item) => item.badgeType === "active"
@@ -436,8 +453,10 @@ const matchAlerts = 0; // until AI matching is built
 }, []);
 
 const fetchReports = async () => {
+  
   try {
     const res = await getMyItems();
+    console.log("API Response:", res.data);
 
     const transformed = res.data.items.map((item) => ({
       id: item._id,
@@ -612,14 +631,14 @@ if (loading) {
                 </div>
                 <p className="text-sm font-bold text-gray-700 mb-1">No reports found</p>
                 <p className="text-xs text-gray-400 mb-5">Try adjusting your search or filter</p>
-                <button className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors shadow-lg shadow-blue-200">
+                <button onClick={() => navigate("/report")} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors shadow-lg shadow-blue-200">
                   Report New Item
                 </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filtered.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard key={item.id} item={item} onDelete={handleDelete} />
                 ))}
               </div>
             )}

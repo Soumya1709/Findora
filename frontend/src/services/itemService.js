@@ -22,3 +22,6 @@ export const getMyItems = () =>
 
 export const getAllItems = () =>
   API.get("/");
+
+export const deleteItem = (id) =>
+  API.delete(`/${id}`);

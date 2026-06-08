@@ -26,6 +26,7 @@ export const createItem = async (req, res) => {
 
       reportedBy: req.user.userId,
     });
+    console.log("Saved Item:", item);
 
     res.status(201).json({
       success: true,
@@ -39,6 +40,7 @@ export const createItem = async (req, res) => {
     });
   }
 };
+
 
 // Get All Items
 export const getAllItems = async (req, res) => {
@@ -110,7 +112,9 @@ export const getMyItems = async (req, res) => {
 // Delete Item
 export const deleteItem = async (req, res) => {
   try {
+     console.log("Delete ID:", req.params.id);
     const item = await Item.findById(req.params.id);
+    console.log("Found Item:", item);
 
     if (!item) {
       return res.status(404).json({

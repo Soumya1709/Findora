@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { createItem } from "../services/itemService";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -598,6 +599,7 @@ export default function ReportItem() {
   const [form, setForm] = useState(initialForm);
   const [previewImg, setPreviewImg] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmitReport = async () => {
   try {
@@ -665,9 +667,10 @@ export default function ReportItem() {
               >
                 Report Another
               </button>
-              <button className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-200 transition-colors">
-                View My Reports
-              </button>
+              <button onClick={() => navigate("/my-reports")} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-200 transition-colors">
+ 
+              View My Reports
+            </button>
             </div>
           </div>
         </div>
