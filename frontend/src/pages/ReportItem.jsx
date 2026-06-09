@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
-import { createItem } from "../services/itemService";
+import { useState, useRef,useEffect } from "react";
+import { createItem,updateItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 
@@ -600,29 +601,77 @@ export default function ReportItem() {
   const [previewImg, setPreviewImg] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const editingItem = location.state?.item;
+  const isEdit = location.state?.isEdit;
+  useEffect(() => {
+  if (editingItem) {
+    const itemDate = editingItem.dateLostOrFound
+      ? new Date(editingItem.dateLostOrFound)
+      : null;
+
+    setForm((prev) => ({
+      ...prev,
+      name: editingItem.name || "",
+      description: editingItem.description || "",
+      category: editingItem.category || "",
+      type: editingItem.type || "",
+      brand: editingItem.brand || "",
+      locationName: editingItem.locationName || "",
+
+      date: itemDate
+        ? itemDate.toISOString().split("T")[0]
+        : "",
+
+      time: itemDate
+        ? itemDate.toTimeString().slice(0, 5)
+        : "",
+    }));
+  }
+}, [editingItem]);
 
   const handleSubmitReport = async () => {
   try {
     const payload = {
-      title: form.name,
-      description: form.description,
-      type: form.type,
-      category: form.category,
-      primaryColor: form.primaryColor,
-      brand: form.brand,
+  title: form.name,
+  description: form.description,
+  type: form.type,
+  category: form.category,
+  primaryColor: form.primaryColor,
+  brand: form.brand,
 
-      location: {
-        name: form.locationName,
-      },
+  location: {
+    name: form.locationName,
+  },
 
-      dateLostOrFound: form.date,
-    };
+  campusZone: form.campusZone,
+  locationNotes: form.locationNotes,
 
-    const response = await createItem(payload);
+  dateLostOrFound:
+    form.date && form.time
+      ? new Date(`${form.date}T${form.time}`)
+      : form.date,
+};
 
-    console.log(response.data);
+    let response;
 
-    setSubmitted(true);
+if (isEdit) {
+  response = await updateItem(
+    editingItem.id,
+    payload
+  );
+
+  alert("Item updated successfully");
+} else {
+  response = await createItem(payload);
+
+  alert("Item created successfully");
+}
+
+console.log(response.data);
+
+setSubmitted(true);
   } catch (error) {
     console.error(error);
 
@@ -736,7 +785,7 @@ export default function ReportItem() {
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
                     : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white shadow-blue-200"}`}
               >
-                {step === STEPS.length ? "Submit Report" : "Continue"}
+                {step === STEPS.length? (isEdit ? "Update Item" : "Submit Report"): "Continue"}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

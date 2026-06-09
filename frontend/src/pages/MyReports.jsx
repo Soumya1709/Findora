@@ -179,7 +179,7 @@ const initials =
 }
 
 /* ─── ITEM CARD ─────────────────────────────────────── */
-function ItemCard({ item,onDelete }) {
+function ItemCard({ item, onDelete, onEdit }) {
   
   if (item.archived) {
     return (
@@ -241,7 +241,7 @@ function ItemCard({ item,onDelete }) {
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-50">
           <div className="flex items-center gap-1">
             {item.canEdit && (
-              <button className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Edit">
+              <button onClick={() => onEdit(item)} className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Edit">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -368,6 +368,7 @@ function Footer() {
 /* ─── MAIN PAGE ─────────────────────────────────────── */
 export default function MyReports() {
   const [reports, setReports] = useState([]);
+  const [editingItem, setEditingItem] =useState(null);
   const navigate = useNavigate();
   const totalReports = reports.length;
   const handleDelete = async (id) => {
@@ -382,6 +383,29 @@ export default function MyReports() {
   } catch (error) {
     console.error(error);
     alert("Failed to delete item");
+  }
+};
+ const handleEdit = (item) => {
+  navigate("/report", {
+    state: {
+      item,
+      isEdit: true,
+    },
+  });
+};
+
+ const handleUpdate = async () => {
+  try {
+    await updateItem(
+      editingItem.id,
+      formData
+    );
+
+    fetchReports();
+
+    alert("Updated successfully");
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -458,21 +482,21 @@ const fetchReports = async () => {
     const res = await getMyItems();
     console.log("API Response:", res.data);
 
-    const transformed = res.data.items.map((item) => ({
-      id: item._id,
-      name: item.title,
-      category: item.category,
-      subcategory: item.location?.name || "Unknown Location",
-      date: new Date(item.createdAt).toLocaleDateString(),
-      status: item.status,
-      badge: item.status,
-      badgeType: item.status,
-      img:
-        item.images?.[0] ||
-        "https://via.placeholder.com/400x300",
-      canEdit: true,
-      canDelete: true,
-    }));
+   const transformed = res.data.items.map((item) => ({
+  id: item._id,
+  name: item.title,
+  description: item.description,
+  category: item.category,
+  brand: item.brand,
+  location: item.location?.name || "",
+  type: item.type,
+  status: item.status,
+  canEdit: true,
+  canDelete: true,
+  campusZone: item.campusZone || "",
+  locationNotes: item.locationNotes || "",
+  dateLostOrFound: item.dateLostOrFound,
+}));
 
     setReports(transformed);
   } catch (error) {
@@ -638,7 +662,7 @@ if (loading) {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filtered.map((item) => (
-                  <ItemCard key={item.id} item={item} onDelete={handleDelete} />
+                  <ItemCard key={item.id} item={item} onDelete={handleDelete} onEdit={handleEdit} />
                 ))}
               </div>
             )}

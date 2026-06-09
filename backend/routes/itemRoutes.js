@@ -7,6 +7,7 @@ import {
   getItemById,
   getMyItems,
   deleteItem,
+  updateItem,
 } from "../controllers/itemController.js";
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.get("/my-items", authMiddleware, getMyItems);
 router.get("/:id", getItemById);
 
 router.delete("/:id", authMiddleware, deleteItem);
+router.put("/:id", authMiddleware, updateItem);
 
 export default router;

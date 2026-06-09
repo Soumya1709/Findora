@@ -26,7 +26,7 @@ export const createItem = async (req, res) => {
 
       reportedBy: req.user.userId,
     });
-    console.log("Saved Item:", item);
+    
 
     res.status(201).json({
       success: true,
@@ -137,6 +137,47 @@ export const deleteItem = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Item deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const updateItem = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found",
+      });
+    }
+
+    if (
+      item.reportedBy.toString() !== req.user.userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    const updatedItem = await Item.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      item: updatedItem,
     });
   } catch (error) {
     res.status(500).json({

@@ -67,6 +67,15 @@ const itemSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    campusZone: {
+       type: String,
+       default: "",
+   },
+
+    locationNotes: {
+      type: String,
+     default: "",
+   },
 
     // ── Photos ────────────────────────────────────
     images: {
