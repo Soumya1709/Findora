@@ -281,13 +281,13 @@ function Sidebar() {
 }
 
 /* ─── ITEM CARD ─────────────────────────────────────── */
-function ItemCard({ item }) {
+function ItemCard({ item,onClick }) {
   const statusStyle = item.status === "found"
     ? "bg-emerald-500 text-white"
     : "bg-amber-500 text-white";
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group flex flex-col">
+    <div onClick={onClick} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group flex flex-col">
       {/* Image */}
       <div className="relative overflow-hidden">
         <img
@@ -433,6 +433,7 @@ export default function BrowseItems() {
   const [date, setDate] = useState("");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
   useEffect(() => {
   fetchItems();
 }, []);
@@ -444,6 +445,8 @@ const fetchItems = async () => {
     const transformed = res.data.items.map((item) => ({
       id: item._id,
       name: item.title,
+      description: item.description,
+      brand: item.brand,
       category: item.category,
       location: item.location?.name || "Unknown Location",
       time: new Date(item.createdAt).toLocaleDateString(),
@@ -478,9 +481,11 @@ const fetchItems = async () => {
       categoryFilters.length === 0 ||
       categoryFilters.includes(item.category);
     const matchSearch =
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.category.toLowerCase().includes(search.toLowerCase()) ||
-      item.location.toLowerCase().includes(search.toLowerCase());
+  item.name?.toLowerCase().includes(search.toLowerCase()) ||
+  item.category?.toLowerCase().includes(search.toLowerCase()) ||
+  item.location?.toLowerCase().includes(search.toLowerCase()) ||
+  item.description?.toLowerCase().includes(search.toLowerCase()) ||
+  item.brand?.toLowerCase().includes(search.toLowerCase());
     return matchStatus && matchCategory && matchSearch;
   });
 
@@ -653,7 +658,7 @@ const fetchItems = async () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {paginated.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard key={item.id} item={item} onClick={() => navigate(`/item/${item.id}`)} />
                 ))}
               </div>
             )}

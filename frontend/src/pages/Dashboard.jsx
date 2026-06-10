@@ -246,7 +246,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
 }
 
 /* ─── TOPBAR ─────────────────────────────────────────── */
-function Topbar({ active }) {
+function Topbar({ active, search, setSearch }) {
   const storedUser = JSON.parse(
   localStorage.getItem("user") || "{}"
 );
@@ -282,7 +282,12 @@ const avatarInitials =
           <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <input className="bg-transparent text-xs text-gray-600 placeholder-gray-400 focus:outline-none w-full" placeholder="Search items..." />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-transparent text-xs text-gray-600 placeholder-gray-400 focus:outline-none w-full"
+            placeholder="Search items..."
+          />
         </div>
 
         {/* Notification bell */}
@@ -313,9 +318,21 @@ const avatarInitials =
 }
 
 /* ─── DASHBOARD CONTENT ──────────────────────────────── */
-function DashboardContent() {
+function DashboardContent({search}) {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const filteredReports = recentReports.filter(
+  (report) =>
+    report.name
+      .toLowerCase()
+      .includes(search.toLowerCase()) ||
+    report.location
+      .toLowerCase()
+      .includes(search.toLowerCase()) ||
+    report.category
+      .toLowerCase()
+      .includes(search.toLowerCase())
+);
 
 useEffect(() => {
   const storedUser = localStorage.getItem("user");
@@ -419,7 +436,7 @@ const isVerified = user?.isVerified || false;
           </div>
 
           <div className="divide-y divide-gray-50">
-            {recentReports.map((report) => (
+            {filteredReports.map((report) => (
               <div key={report.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 transition-colors">
                 {/* Thumbnail */}
                 <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
@@ -572,14 +589,15 @@ const isVerified = user?.isVerified || false;
 export default function Dashboard() {
   const [active, setActive] = useState("Dashboard");
   const [collapsed, setCollapsed] = useState(false);
+  const [search, setSearch] = useState("");
   
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar active={active} setActive={setActive} collapsed={collapsed} setCollapsed={setCollapsed} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Topbar active={active} />
-        <DashboardContent />
+        <Topbar active={active} search={search} setSearch={setSearch} />
+        <DashboardContent  search={search} />
       </div>
     </div>
   );
