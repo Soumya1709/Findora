@@ -28,3 +28,6 @@ export const deleteItem = (id) =>
 
 export const updateItem = (id, itemData) =>
   API.put(`/${id}`, itemData);
+
+export const getItemById = (id) =>
+  API.get(`/${id}`);

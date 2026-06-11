@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { getItemById } from "../services/itemService";
 
 const Logo = ({ className = "" }) => (
   <span className={`font-bold text-xl tracking-tight ${className}`}>
@@ -145,7 +147,52 @@ const similarItems = [
 ];
 
 export default function ItemsDetails() {
+  const { id } = useParams();
   const [activeThumb, setActiveThumb] = useState(0);
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+  fetchItem();
+}, [id]);
+
+const fetchItem = async () => {
+  try {
+    console.log("Fetching ID:", id);
+    const res = await getItemById(id);
+    console.log("Response:", res.data);
+    setItem(res.data.item);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      Loading...
+    </div>
+  );
+} 
+
+if (!item) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Item not found
+      </div>
+    );
+  }
+const user = JSON.parse(
+  localStorage.getItem("user") || "{}"
+);
+
+const initials =
+  user?.fullName
+    ?.split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase() || "U";
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -173,7 +220,7 @@ export default function ItemsDetails() {
             <button className="text-gray-400 hover:text-gray-700 transition-colors"><BellIcon /></button>
             <button className="text-gray-400 hover:text-gray-700 transition-colors"><GearIcon /></button>
             <div className="w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-bold grid place-items-center cursor-pointer">
-              JD
+             {initials}
             </div>
           </div>
         </div>
@@ -183,9 +230,9 @@ export default function ItemsDetails() {
       <div className="max-w-5xl mx-auto px-6 py-3 flex items-center gap-1.5 text-xs text-gray-400">
         <a href="#" className="hover:text-blue-500 transition-colors">Home</a>
         <span>›</span>
-        <a href="#" className="hover:text-blue-500 transition-colors">Electronics</a>
+        <a href="#" className="hover:text-blue-500 transition-colors">{item?.category}</a>
         <span>›</span>
-        <span className="text-gray-600">Lost MacBook Pro</span>
+        <span className="text-gray-600">{item?.brand}</span>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 pb-16">
@@ -195,9 +242,17 @@ export default function ItemsDetails() {
           <div>
             {/* Main image */}
             <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3]">
+              {item?.images?.length ? (
+           <img
+              src={item.images[0]}
+              alt={item.title}
+              className="w-full h-full object-cover"
+           />
+            ) : (
               <LaptopSVG className="w-full h-full" />
+            )}
               <div className="absolute top-3 left-3 bg-emerald-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                <span>✓</span> Found Item
+                <span>✓</span> {item?.type}
               </div>
             </div>
 
@@ -228,7 +283,7 @@ export default function ItemsDetails() {
               <MapSVG />
               <div className="absolute bottom-2.5 left-2.5 bg-white/90 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-700 flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-blue-500" />
-                Found at: Main Library, 2nd Floor
+                {item?.location?.name}
               </div>
             </div>
           </div>
@@ -237,26 +292,41 @@ export default function ItemsDetails() {
           <div>
             {/* Tags */}
             <div className="flex gap-2 flex-wrap mb-3">
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">Electronics</span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200">MacBook Pro</span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">{item?.category}</span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200">{item?.brand}</span>
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight leading-tight mb-2.5">
-              Silver Apple MacBook Pro 14"
+              {item?.title}
             </h1>
 
             <p className="text-sm text-gray-500 leading-relaxed mb-5">
-              A laptop was found left unattended in the quiet study zone of the Main Library. It appears to be a recent model with no external skin or stickers. It is currently being held at the Library Security Desk.
+              {item?.description}
             </p>
 
             {/* Meta grid */}
             <div className="grid grid-cols-2 gap-3.5 p-4 bg-gray-50 border border-gray-200 rounded-xl mb-5">
               {[
-                { label: "Color", val: "Space Grey / Silver", red: false },
-                { label: "Brand", val: "Apple", red: false },
-                { label: "Date Found", val: "Oct 29, 2024", red: false },
-                { label: "Reference ID", val: "#CF-88291", red: true },
-              ].map(({ label, val, red }) => (
+  {
+    label: "Category",
+    val: item?.category,
+  },
+  {
+    label: "Brand",
+    val: item?.brand,
+  },
+  {
+    label: "Date",
+    val: new Date(
+      item?.dateLostOrFound
+    ).toLocaleDateString(),
+  },
+  {
+    label: "Reference ID",
+    val: item?._id?.slice(-6),
+    red: true,
+  },
+].map(({ label, val, red }) => (
                 <div key={label}>
                   <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{label}</div>
                   <div className={`text-sm font-semibold ${red ? "text-red-500" : "text-gray-900"}`}>{val}</div>
@@ -298,13 +368,13 @@ export default function ItemsDetails() {
 
             {/* Staff card */}
             <div className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl mt-5">
-              <div className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-bold grid place-items-center flex-shrink-0">JS</div>
+              <div className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-bold grid place-items-center flex-shrink-0">{initials}</div>
               <div className="flex-1">
-                <div className="text-sm font-semibold">Jane Smith</div>
-                <div className="text-xs text-gray-400">Library Staff</div>
+                <div className="text-sm font-semibold"> Reported By</div>
+                <div className="text-xs text-gray-400">Item Owner</div>
               </div>
               <button className="px-3.5 py-1.5 text-xs font-medium border border-gray-200 hover:border-blue-400 hover:text-blue-600 rounded-lg transition-colors bg-white">
-                Contact
+                Owner Information
               </button>
             </div>
           </div>
