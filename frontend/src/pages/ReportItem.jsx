@@ -633,26 +633,35 @@ export default function ReportItem() {
 
   const handleSubmitReport = async () => {
   try {
-    const payload = {
-  title: form.name,
-  description: form.description,
-  type: form.type,
-  category: form.category,
-  primaryColor: form.primaryColor,
-  brand: form.brand,
+    const payload = new FormData();
 
-  location: {
+payload.append("title", form.name);
+payload.append("description", form.description);
+payload.append("type", form.type);
+payload.append("category", form.category);
+payload.append("primaryColor", form.primaryColor);
+payload.append("brand", form.brand);
+
+payload.append(
+  "location",
+  JSON.stringify({
     name: form.locationName,
-  },
+  })
+);
 
-  campusZone: form.campusZone,
-  locationNotes: form.locationNotes,
+payload.append("campusZone", form.campusZone);
+payload.append("locationNotes", form.locationNotes);
 
-  dateLostOrFound:
-    form.date && form.time
-      ? new Date(`${form.date}T${form.time}`)
-      : form.date,
-};
+payload.append(
+  "dateLostOrFound",
+  form.date && form.time
+    ? new Date(`${form.date}T${form.time}`)
+    : form.date
+);
+
+if (form.imageFile) {
+  payload.append("image", form.imageFile);
+}
 
     let response;
 

@@ -1,5 +1,6 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
+import upload from "../middleware/upload.js";
 
 import {
   createItem,
@@ -12,7 +13,12 @@ import {
 
 const router = express.Router();
 
-router.post("/", authMiddleware, createItem);
+router.post(
+  "/",
+  authMiddleware,
+  upload.single("image"),
+  createItem
+);
 
 router.get("/", getAllItems);
 

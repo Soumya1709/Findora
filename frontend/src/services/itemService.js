@@ -15,7 +15,11 @@ API.interceptors.request.use((config) => {
 });
 
 export const createItem = (itemData) =>
-  API.post("/", itemData);
+  API.post("/", itemData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
 export const getMyItems = () =>
   API.get("/my-items");

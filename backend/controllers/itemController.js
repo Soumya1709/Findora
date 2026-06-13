@@ -1,6 +1,9 @@
 import Item from "../models/Item.js";
+import cloudinary from "../config/cloudinary.js";
+import streamifier from "streamifier";
 
 // Create Item
+
 export const createItem = async (req, res) => {
   try {
     const {
@@ -13,19 +16,51 @@ export const createItem = async (req, res) => {
       location,
       dateLostOrFound,
     } = req.body;
+    const parsedLocation = location
+  ? JSON.parse(location)
+  : {};
+  
 
-    const item = await Item.create({
-      title,
-      description,
-      type,
-      category,
-      primaryColor,
-      brand,
-      location,
-      dateLostOrFound,
+  let imageUrl = "";
 
-      reportedBy: req.user.userId,
-    });
+if (req.file) {
+  ;
+  const result = await new Promise((resolve, reject) => {
+    
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "findora",
+      },
+      (error, result) => {
+        
+
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    streamifier
+      .createReadStream(req.file.buffer)
+      .pipe(stream);
+  });
+
+  imageUrl = result.secure_url;
+}
+
+const item = await Item.create({
+  title,
+  description,
+  type,
+  category,
+  primaryColor,
+  brand,
+  location:parsedLocation,
+  dateLostOrFound,
+
+  images: imageUrl ? [imageUrl] : [],
+
+  reportedBy: req.user.userId,
+});
     
 
     res.status(201).json({

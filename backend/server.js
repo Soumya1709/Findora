@@ -7,6 +7,12 @@ import authMiddleware from "./middleware/authMiddleware.js";
 import itemRoutes from "./routes/itemRoutes.js";
 
 dotenv.config();
+
+
+
+
+
+import cloudinary from "./config/cloudinary.js";
 connectDB();
 
 const app = express();
