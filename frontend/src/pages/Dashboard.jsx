@@ -1,39 +1,8 @@
 import { useState,useEffect} from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { getMyItems } from "../services/itemService";
 
-/* ─── MOCK DATA ──────────────────────────────────────── */
-
-
-const recentReports = [
-  {
-    id: 1,
-    name: "Sony XM4 Headphones",
-    location: "Library, 3rd Floor",
-    date: "Jan 12, 2024",
-    status: "returned",
-    category: "Electronics",
-    img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&q=80",
-  },
-  {
-    id: 2,
-    name: "Calculus III Textbook",
-    location: "Main Plaza",
-    date: "Feb 05, 2024",
-    status: "lost",
-    category: "Books",
-    img: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=80&q=80",
-  },
-  {
-    id: 3,
-    name: "HydroFlask (Black)",
-    location: "Gym Locker Room",
-    date: "Feb 14, 2024",
-    status: "found",
-    category: "Accessories",
-    img: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=80&q=80",
-  },
-];
 
 const matchAlerts = [
   {
@@ -52,11 +21,7 @@ const matchAlerts = [
   },
 ];
 
-const recentActivity = [
-  { id: 1, action: "Item returned", item: "Sony XM4 Headphones", time: "2 days ago", type: "returned" },
-  { id: 2, action: "Match found",   item: "Calculus III Textbook", time: "5 days ago", type: "match" },
-  { id: 3, action: "Item reported", item: "HydroFlask (Black)",   time: "1 week ago", type: "reported" },
-];
+
 
 /* ─── HELPERS ────────────────────────────────────────── */
 const statusStyles = {
@@ -74,7 +39,7 @@ const statusDot = {
 const activityIcon = {
   returned: { bg: "bg-blue-100",    icon: "✓", text: "text-blue-600" },
   match:    { bg: "bg-purple-100",  icon: "⚡", text: "text-purple-600" },
-  reported: { bg: "bg-amber-100",   icon: "📋", text: "text-amber-600" },
+  report: { bg: "bg-amber-100",   icon: "📋", text: "text-amber-600" },
 };
 
 function ConfidenceRing({ value }) {
@@ -320,6 +285,32 @@ const avatarInitials =
 /* ─── DASHBOARD CONTENT ──────────────────────────────── */
 function DashboardContent({search}) {
   const [user, setUser] = useState(null);
+  const [reports, setReports] = useState([]);
+  const recentReports = reports
+  .slice(0, 3)
+  .map((item) => ({
+    id: item._id,
+    name: item.title,
+    location: item.location?.name || "Unknown Location",
+    date: new Date(
+      item.dateLostOrFound
+    ).toLocaleDateString(),
+    status: item.type,
+    category: item.category,
+    img:
+      item.images?.[0] ||
+      "https://placehold.co/80x80",
+  }));
+
+  const recentActivity = reports
+  .slice(0, 5)
+  .map((item) => ({
+    id: item._id,
+    type: "report",
+    action: "Item Reported",
+    item: item.title,
+    time: new Date(item.createdAt).toLocaleDateString(),
+  }));
   const navigate = useNavigate();
   const filteredReports = recentReports.filter(
   (report) =>
@@ -340,6 +331,8 @@ useEffect(() => {
   if (storedUser) {
     setUser(JSON.parse(storedUser));
   }
+
+  fetchReports();
 }, []);
 
 const avatarInitials =
@@ -349,6 +342,16 @@ const avatarInitials =
     .join("")
     .toUpperCase() || "U";
 
+const fetchReports = async () => {
+  try {
+    const res = await getMyItems();
+
+    setReports(res.data.items);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const memberSince = user?.createdAt
   ? new Date(user.createdAt).toLocaleDateString("en-US", {
       month: "short",
@@ -357,9 +360,21 @@ const memberSince = user?.createdAt
   : "Recently";
 
 const stats = {
-  itemsReported: user?.stats?.itemsReported || 0,
-  itemsRecovered: user?.stats?.itemsRecovered || 0,
+  itemsReported: reports.length,
+
+  itemsRecovered: reports.filter(
+    (item) => item.status === "recovered"
+  ).length,
 };
+
+const successRate =
+  reports.length > 0
+    ? Math.round(
+        (stats.itemsRecovered /
+          stats.itemsReported) *
+          100
+      )
+    : 0;
 
 const isVerified = user?.isVerified || false;
   return (
@@ -402,14 +417,14 @@ const isVerified = user?.isVerified || false;
           },
           {
             label: "Active Alerts",
-            value: 2,
+            value: reports.filter((item) => item.status === "active").length,
             icon: "⚡",
             color: "bg-purple-50 border-purple-100",
             valueColor: "text-purple-700",
           },
           {
             label: "Success Rate",
-            value: "67%",
+            value: `${successRate}%`,
             icon: "🎯",
             color: "bg-blue-50 border-blue-100",
             valueColor: "text-blue-700",

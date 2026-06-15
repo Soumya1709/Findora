@@ -180,6 +180,7 @@ const initials =
 
 /* ─── ITEM CARD ─────────────────────────────────────── */
 function ItemCard({ item, onDelete, onEdit }) {
+  const navigate=useNavigate();
   
   if (item.archived) {
     return (
@@ -257,8 +258,8 @@ function ItemCard({ item, onDelete, onEdit }) {
               </button>
             )}
           </div>
-          <button className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-            View Details →
+          <button onClick={() => navigate(`/item/${item.id}`)}className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              View Details →
           </button>
         </div>
       </div>
@@ -491,6 +492,9 @@ const fetchReports = async () => {
   location: item.location?.name || "",
   type: item.type,
   status: item.status,
+  img:
+  item.images?.[0] ||
+  "https://placehold.co/400x300",
   canEdit: true,
   canDelete: true,
   campusZone: item.campusZone || "",
