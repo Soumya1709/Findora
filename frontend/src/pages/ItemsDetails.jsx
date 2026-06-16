@@ -1,6 +1,6 @@
 import { useState,useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getItemById } from "../services/itemService";
+import { useNavigate, useParams } from "react-router-dom";
+import { getItemById,getSimilarItems} from "../services/itemService";
 
 const Logo = ({ className = "" }) => (
   <span className={`font-bold text-xl tracking-tight ${className}`}>
@@ -151,6 +151,8 @@ export default function ItemsDetails() {
   const [activeThumb, setActiveThumb] = useState(0);
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [similarItems, setSimilarItems] = useState([]);
+  const navigate=useNavigate();
   
   useEffect(() => {
   fetchItem();
@@ -162,6 +164,11 @@ const fetchItem = async () => {
     const res = await getItemById(id);
     console.log("Response:", res.data);
     setItem(res.data.item);
+    const similarRes = await getSimilarItems(id);
+
+    console.log("Similar:", similarRes.data);
+
+    setSimilarItems(similarRes.data.items);
   } catch (error) {
     console.error(error);
   } finally {
@@ -389,28 +396,40 @@ const initials =
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {similarItems.map((item) => (
               <div
-                key={item.name}
-                className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-              >
-                <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-                  {item.svg}
-                  <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                    {item.label}
+                 key={item._id} onClick={() =>
+                 navigate(`/item/${item._id}`)}className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+                 <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+                    <img
+                      src={item.images?.[0] ||"https://placehold.co/400x300"}
+                      alt={item.title}
+                      className="w-full h-full object-cover"/>
+
+                   <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      {item.type}
                   </div>
                 </div>
-                <div className="p-3">
-                  <div className="text-sm font-semibold mb-0.5">{item.name}</div>
-                  <div className="text-xs text-gray-400 mb-2">{item.loc}</div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-                      <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /></svg>
-                      {item.match}% Match
+
+                 <div className="p-3">
+                    <div className="text-sm font-semibold mb-0.5">
+                        {item.title}
                     </div>
-                    <div className="text-xs text-gray-400">{item.time}</div>
-                  </div>
+
+                    <div className="text-xs text-gray-400 mb-2">
+                        {item.location?.name}
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <div className="text-xs font-semibold text-emerald-600">
+                         {item.category}
+                    </div>
+
+                    <div className="text-xs text-gray-400">
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </div>
                 </div>
-              </div>
-            ))}
+            </div>
+          </div>
+          ))}
           </div>
         </div>
       </div>

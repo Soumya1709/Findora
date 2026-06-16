@@ -33,5 +33,8 @@ export const deleteItem = (id) =>
 export const updateItem = (id, itemData) =>
   API.put(`/${id}`, itemData);
 
+export const getSimilarItems = (id) =>
+  API.get(`/similar/${id}`);
+
 export const getItemById = (id) =>
   API.get(`/${id}`);

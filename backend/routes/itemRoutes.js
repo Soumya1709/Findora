@@ -9,6 +9,7 @@ import {
   getMyItems,
   deleteItem,
   updateItem,
+  getSimilarItems
 } from "../controllers/itemController.js";
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.get("/", getAllItems);
 router.get("/my-items", authMiddleware, getMyItems);
 
 router.get("/:id", getItemById);
+router.get("/similar/:id",getSimilarItems);
 
 router.delete("/:id", authMiddleware, deleteItem);
 router.put("/:id", authMiddleware, updateItem);

@@ -122,6 +122,45 @@ export const getItemById = async (req, res) => {
   }
 };
 
+export const getSimilarItems = async (
+  req,
+  res
+) => {
+  try {
+    const currentItem =
+      await Item.findById(req.params.id);
+
+    if (!currentItem) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found",
+      });
+    }
+
+    const similarItems = await Item.find({
+  _id: { $ne: currentItem._id },
+
+  category: currentItem.category,
+
+  type: {
+    $ne: currentItem.type,
+  },
+})
+.limit(4)
+.sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      items: similarItems,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Get Logged In User's Items
 export const getMyItems = async (req, res) => {
   try {
