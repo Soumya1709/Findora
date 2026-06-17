@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import { googleLogin } from "../services/authService";
 
 export default function Login() {
   const [showPass, setShowPass] = useState(false);
@@ -19,6 +21,36 @@ export default function Login() {
        [e.target.name]: e.target.value,
      });
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+  onSuccess: async (tokenResponse) => {
+    try {
+  const res = await googleLogin(
+  tokenResponse.access_token
+);
+
+  localStorage.setItem(
+    "token",
+    res.data.token
+  );
+
+  localStorage.setItem(
+    "user",
+    JSON.stringify(
+      res.data.user
+    )
+  );
+
+  navigate("/dashboard");
+} catch (error) {
+  console.error(error);
+}
+  },
+
+  onError: () => {
+    console.log("Google Login Failed");
+  },
+});
 
 
   const handleSubmit = async (e) => {
@@ -196,6 +228,7 @@ export default function Login() {
           <button
             key={label}
             type="button"
+            onClick={label === "Google"? () => handleGoogleLogin(): undefined}
             className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-700
                        hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98]
                        transition-all duration-150"

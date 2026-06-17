@@ -7,5 +7,8 @@ const API = axios.create({
 export const signup = (userData) =>
   API.post("/signup", userData);
 
+export const googleLogin = (accessToken) =>
+  API.post("/google", {accessToken,});
+
 export const login = (userData) =>
   API.post("/login", userData);
