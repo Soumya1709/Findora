@@ -1,6 +1,7 @@
 import { useState,useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getItemById,getSimilarItems} from "../services/itemService";
+import { createClaim } from "../services/claimService";
 
 const Logo = ({ className = "" }) => (
   <span className={`font-bold text-xl tracking-tight ${className}`}>
@@ -201,6 +202,27 @@ const initials =
     .join("")
     .toUpperCase() || "U";
 
+const handleClaim = async () => {
+  try {
+    const res = await createClaim(
+      item._id
+    );
+
+    console.log(res.data);
+
+    alert(
+      "Claim request submitted successfully"
+    );
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to create claim"
+    );
+  }
+};
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
 
@@ -342,7 +364,7 @@ const initials =
             </div>
 
             {/* CTA */}
-            <button className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+            <button onClick={handleClaim} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
               </svg>

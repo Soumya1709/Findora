@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import authMiddleware from "./middleware/authMiddleware.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import claimRoutes from "./routes/claimRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/claims", claimRoutes);
+app.use("/api/notifications",notificationRoutes);
 
 app.use(cors());
 app.use(express.json());
