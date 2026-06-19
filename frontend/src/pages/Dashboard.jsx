@@ -2,6 +2,7 @@ import { useState,useEffect} from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getMyItems } from "../services/itemService";
+import { getNotifications,markNotificationRead } from "../services/notificationService";
 
 
 const matchAlerts = [
@@ -212,9 +213,48 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
 
 /* ─── TOPBAR ─────────────────────────────────────────── */
 function Topbar({ active, search, setSearch }) {
+  const [notifications, setNotifications] =useState([]);
+
+const [showNotifications,setShowNotifications] =
+  useState(false);
   const storedUser = JSON.parse(
   localStorage.getItem("user") || "{}"
 );
+
+const unreadCount =
+  notifications.filter(
+    (n) => !n.isRead
+  ).length;
+
+const fetchNotifications = async () => {
+  try {
+    const res =
+      await getNotifications();
+
+    setNotifications(
+      res.data.notifications
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+useEffect(() => {
+  fetchNotifications();
+}, []);
+
+const handleNotificationClick =
+  async (id) => {
+    try {
+      await markNotificationRead(
+        id
+      );
+
+      fetchNotifications();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 const avatarInitials =
   storedUser?.fullName
@@ -256,13 +296,45 @@ const avatarInitials =
         </div>
 
         {/* Notification bell */}
-        <button className="relative w-8 h-8 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+        <button onClick={() => setShowNotifications(!showNotifications)} className="relative w-8 h-8 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          {unreadCount > 0 && (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] min-w-[16px] h-4 flex items-center justify-center rounded-full">{unreadCount}</span>)}
         </button>
+
+        {
+  showNotifications && (
+    <div className="absolute right-0 top-10 w-80 bg-white rounded-xl shadow-lg border z-50 overflow-hidden">
+      <div className="p-3 border-b font-semibold">
+        Notifications
+      </div>
+
+      {notifications.length === 0 ? (
+        <div className="p-4 text-sm text-gray-500">
+          No notifications
+        </div>
+      ) : (
+        notifications.map((n) => (
+          <div
+             key={n._id}
+             onClick={() =>handleNotificationClick(n._id)}
+             className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${!n.isRead? "bg-blue-50": ""}`}
+           >
+            <div className="font-medium text-sm">
+              {n.title}
+            </div>
+
+            <div className="text-xs text-gray-500">
+              {n.message}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  )
+}
 
         {/* Settings */}
         <button className="w-8 h-8 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors">

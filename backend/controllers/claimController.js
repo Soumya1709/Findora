@@ -41,3 +41,49 @@ export const createClaim = async (
     });
   }
 };
+
+export const updateClaimStatus = async (req,res) => {
+  try {
+    const { status } = req.body;
+
+    const claim =
+      await Claim.findById(req.params.id)
+        .populate("item")
+        .populate("claimant");
+
+    if (!claim) {
+      return res.status(404).json({
+        success: false,
+        message: "Claim not found",
+      });
+    }
+
+    claim.status = status;
+
+    await claim.save();
+
+    await Notification.create({
+      user: claim.claimant._id,
+
+      title:
+        status === "approved"
+          ? "Claim Approved"
+          : "Claim Rejected",
+
+      message:
+        status === "approved"
+          ? "Your claim has been approved."
+          : "Your claim has been rejected.",
+    });
+
+    res.status(200).json({
+      success: true,
+      claim,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
