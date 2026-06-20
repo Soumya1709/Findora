@@ -87,3 +87,54 @@ export const updateClaimStatus = async (req,res) => {
     });
   }
 };
+
+export const getMyItemClaims = async (req,res) => {
+  try {
+    const claims = await Claim.find()
+      .populate("item")
+      .populate("claimant");
+
+    const myClaims = claims.filter(
+      (claim) =>
+        claim.item.reportedBy.toString() ===
+        req.user.userId
+    );
+
+    res.status(200).json({
+      success: true,
+      claims: myClaims,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getClaimById = async (req,res) => {
+  try {
+    const claim = await Claim.findById(
+      req.params.id
+    )
+      .populate("item")
+      .populate("claimant");
+
+    if (!claim) {
+      return res.status(404).json({
+        success: false,
+        message: "Claim not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      claim,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

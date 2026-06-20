@@ -17,3 +17,12 @@ claimAPI.interceptors.request.use((config) => {
 
 export const createClaim = (itemId) =>
   claimAPI.post(`/${itemId}`);
+
+export const getMyItemClaims = () =>
+  claimAPI.get("/my-item-claims");
+
+export const updateClaimStatus = (claimId,status) =>
+  claimAPI.patch(`/${claimId}`,{ status });
+
+export const getClaimById = (id) =>
+  claimAPI.get(`/${id}`);
