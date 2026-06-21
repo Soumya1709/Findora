@@ -214,6 +214,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
 /* ─── TOPBAR ─────────────────────────────────────────── */
 function Topbar({ active, search, setSearch }) {
   const [notifications, setNotifications] =useState([]);
+  const navigate = useNavigate();
 
 const [showNotifications,setShowNotifications] =
   useState(false);
@@ -319,7 +320,7 @@ const avatarInitials =
         notifications.map((n) => (
           <div
              key={n._id}
-             onClick={() =>handleNotificationClick(n._id)}
+             onClick={() =>navigate(`/claims/${n.claimId}`)}
              className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${!n.isRead? "bg-blue-50": ""}`}
            >
             <div className="font-medium text-sm">

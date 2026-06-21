@@ -6,6 +6,7 @@ import ReportItem from "./pages/ReportItem";
 import MyReports from "./pages/MyReports";
 import BrowseItems from "./pages/BrowseItems";
 import ItemsDetails from "./pages/ItemsDetails";
+import ClaimPage from "./pages/Claim";
 
 import Home from "./pages/Home";
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/my-reports" element={<MyReports />} />
         <Route path="/browse" element={<BrowseItems />} />
         <Route path="/item/:id" element={<ItemsDetails />}/>
+        <Route path="/claims/:id" element={<ClaimPage />} />
       </Routes>
     </BrowserRouter>
   );

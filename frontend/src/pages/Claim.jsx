@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { updateClaimStatus } from "../services/claimService";
+import { useState,useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { updateClaimStatus,getClaimById } from "../services/claimService";
 
 const Logo = ({ className = "" }) => (
   <span className={`font-bold text-xl tracking-tight ${className}`}>
@@ -74,6 +75,28 @@ export default function ClaimPage() {
   const [showRejectNote, setShowRejectNote] = useState(false);
   const [note, setNote] = useState("");
   const [claim, setClaim] = useState(null);
+  const [loading, setLoading] =useState(true);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+  fetchClaim();
+  }, []);
+
+const fetchClaim = async () => {
+  try {
+    const res =await getClaimById(id);
+    console.log("Claim:", res.data.claim);
+    console.log("Item:", res.data.claim.item);
+
+    setClaim(res.data.claim);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleUpdate = async (claimId,status) => {
   try {
@@ -95,6 +118,21 @@ export default function ClaimPage() {
     );
   }
 };
+
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      Loading...
+    </div>
+  );
+}
+if (!claim) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      Claim not found
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -162,16 +200,28 @@ export default function ClaimPage() {
             {/* Item summary card */}
             <div className="bg-white border border-gray-200 rounded-xl p-4 flex gap-4 mb-6">
               <div className="w-28 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                <LaptopSVG className="w-full h-full" />
-              </div>
+                   {claim.item.images?.length > 0 ? (
+                   <img
+                      src={claim.item.images[0]}
+                      alt={claim.item.title}
+                      className="w-full h-full object-cover"
+                    />) : (
+                      <LaptopSVG className="w-full h-full" />
+                     )}
+                   </div>
               <div className="flex-1">
                 <div className="flex gap-2 mb-1.5">
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">Electronics</span>
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">{claim.item.category}</span>
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200">#CF-88291</span>
                 </div>
-                <div className="text-base font-bold tracking-tight">Silver Apple MacBook Pro 14"</div>
-                <div className="text-xs text-gray-400 mt-1">Found at Main Library, 2nd Floor · Oct 29, 2024</div>
+                <div className="text-base font-bold tracking-tight">{claim.item.title}</div>
+                <div className="text-xs text-gray-400 mt-1">{claim.item.location?.name} · {new Date( claim.item.dateLostOrFound).toLocaleDateString()}</div>
               </div>
+            </div>
+
+            <div className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                claim.status === "pending"? "bg-yellow-100 text-yellow-700": claim.status === "approved"? "bg-green-100 text-green-700": "bg-red-100 text-red-700"}`}>
+                 {claim.status}
             </div>
 
             {/* Claimant info */}
@@ -181,17 +231,17 @@ export default function ClaimPage() {
             <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-blue-600 text-white text-sm font-bold grid place-items-center flex-shrink-0">
-                  AM
+                 {claim.claimant.fullName.split(" ").map((n) => n[0]).join("").toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">Aarav Mehta</div>
+                  <div className="text-sm font-semibold">{claim.claimant.fullName}</div>
                   <div className="text-xs text-gray-400">Student ID: 20231147</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3.5 p-4 bg-gray-50 border border-gray-200 rounded-xl">
                 <div>
                   <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Email</div>
-                  <div className="text-sm font-semibold">aarav.m@university.edu</div>
+                  <div className="text-sm font-semibold">{claim.claimant.email}</div>
                 </div>
                 <div>
                   <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Phone</div>
@@ -199,11 +249,11 @@ export default function ClaimPage() {
                 </div>
                 <div>
                   <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Claim Submitted</div>
-                  <div className="text-sm font-semibold">Oct 30, 2024</div>
+                  <div className="text-sm font-semibold">{new Date(claim.createdAt).toLocaleDateString()}</div>
                 </div>
                 <div>
                   <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Claim ID</div>
-                  <div className="text-sm font-semibold text-red-500">#CLM-5521</div>
+                  <div className="text-sm font-semibold text-red-500">{claim._id}</div>
                 </div>
               </div>
             </div>

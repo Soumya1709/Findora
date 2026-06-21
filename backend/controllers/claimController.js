@@ -28,6 +28,8 @@ export const createClaim = async (
 
       message:
         "A user believes this item belongs to them.",
+
+      claimId: claim._id,
     });
 
     res.status(201).json({

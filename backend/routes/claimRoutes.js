@@ -4,9 +4,11 @@ import { createClaim,updateClaimStatus,getMyItemClaims,getClaimById} from "../co
 
 const router = express.Router();
 
-router.post("/:itemId",authMiddleware,createClaim);
-router.patch("/:id",authMiddleware,updateClaimStatus);
 router.get("/my-item-claims",authMiddleware,getMyItemClaims);
 router.get("/:id",authMiddleware,getClaimById);
+router.post("/:itemId",authMiddleware,createClaim);
+router.patch("/:id",authMiddleware,updateClaimStatus);
+
+
 
 export default router;
