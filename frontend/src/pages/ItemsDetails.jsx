@@ -364,12 +364,24 @@ const handleClaim = async () => {
             </div>
 
             {/* CTA */}
-            <button onClick={handleClaim} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
-              </svg>
-              Is This Mine?
-            </button>
+            {
+               item.type === "found" && item.reportedBy !== user._id && (
+               <button
+                  onClick={handleClaim} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+               <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                <circle cx="12" cy="12" r="10" />
+                   <path d="M12 8v4l3 3" />
+               </svg>
+
+                   Is This Mine?
+                </button>
+             )}
 
             <button className="w-full mt-2.5 py-2.5 border border-gray-200 hover:border-blue-400 hover:text-blue-600 text-gray-700 text-sm font-medium rounded-xl transition-colors flex items-center justify-center gap-2 bg-white">
               <ShareIcon />

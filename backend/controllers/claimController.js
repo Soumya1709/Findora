@@ -15,6 +15,35 @@ export const createClaim = async (
         message: "Item not found",
       });
     }
+    if (item.type !== "found") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Claims can only be made on found items",
+      });
+    }
+    if (
+      item.reportedBy.toString() ===
+      req.user.userId
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "You cannot claim your own item",
+      });
+    }
+  const existingClaim =
+     await Claim.findOne({
+        item: item._id,
+        claimant: req.user.userId,
+  });
+
+      if (existingClaim) {
+           return res.status(400).json({
+           success: false,
+           message:"You have already claimed this item",
+      });
+      }
 
     const claim = await Claim.create({
       item: item._id,
