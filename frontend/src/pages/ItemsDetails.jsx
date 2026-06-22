@@ -153,6 +153,8 @@ export default function ItemsDetails() {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarItems, setSimilarItems] = useState([]);
+  const [showOwnerModal,setShowOwnerModal] = useState(false);
+  const canViewOwner = true;
   const navigate=useNavigate();
   
   useEffect(() => {
@@ -408,18 +410,37 @@ const handleClaim = async () => {
             </div>
 
             {/* Staff card */}
-            <div className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl mt-5">
-              <div className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-bold grid place-items-center flex-shrink-0">{initials}</div>
-              <div className="flex-1">
-                <div className="text-sm font-semibold"> Reported By</div>
-                <div className="text-xs text-gray-400">Item Owner</div>
+            <div className="flex items-center justify-between gap-4 p-4 border border-gray-200 rounded-xl mt-5">
+              <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-blue-600 text-white text-sm font-bold grid place-items-center">
+                 {item.reportedBy?.fullName
+                 ?.split(" ")
+                 .map((n) => n[0])
+                 .join("")
+                 .toUpperCase()}
               </div>
-              <button className="px-3.5 py-1.5 text-xs font-medium border border-gray-200 hover:border-blue-400 hover:text-blue-600 rounded-lg transition-colors bg-white">
-                Owner Information
+
+              <div>
+                 <h3 className="text-sm font-semibold text-gray-900">
+                     Reported By
+                 </h3>
+
+                 <p className="text-xs text-gray-500">
+                    {item.reportedBy?.fullName}
+                 </p>
+              </div>
+            </div>
+
+              <div className="flex flex-col items-end">
+              <button disabled={!canViewOwner} onClick={() => setShowOwnerModal(true)} className={`px-3 py-2 text-xs font-medium rounded-lg ${canViewOwner? "border border-gray-200 hover:border-blue-400 hover:text-blue-600 bg-white": "bg-gray-100 text-gray-400 cursor-not-allowed"}`}>
+                 Owner Information
               </button>
+
+              {!canViewOwner && ( <p className="text-[10px] text-gray-400 mt-1"> Available after claim approval</p>)}
+             </div>
+             </div>
             </div>
           </div>
-        </div>
 
         {/* SIMILAR ITEMS */}
         <div className="mt-10">
@@ -430,43 +451,77 @@ const handleClaim = async () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {similarItems.map((item) => (
               <div
-                 key={item._id} onClick={() =>
-                 navigate(`/item/${item._id}`)}className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                 <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-                    <img
-                      src={item.images?.[0] ||"https://placehold.co/400x300"}
-                      alt={item.title}
-                      className="w-full h-full object-cover"/>
+                key={item._id}
+                onClick={() => navigate(`/item/${item._id}`)}
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+              >
+                <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+                  <img
+                    src={item.images?.[0] || "https://placehold.co/400x300"}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
 
-                   <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      {item.type}
+                  <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    {item.type}
                   </div>
                 </div>
 
-                 <div className="p-3">
-                    <div className="text-sm font-semibold mb-0.5">
-                        {item.title}
-                    </div>
+                <div className="p-3">
+                  <div className="text-sm font-semibold mb-0.5">
+                    {item.title}
+                  </div>
 
-                    <div className="text-xs text-gray-400 mb-2">
-                        {item.location?.name}
-                    </div>
+                  <div className="text-xs text-gray-400 mb-2">
+                    {item.location?.name}
+                  </div>
 
-                    <div className="flex items-center justify-between">
-                        <div className="text-xs font-semibold text-emerald-600">
-                         {item.category}
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-semibold text-emerald-600">
+                      {item.category}
                     </div>
 
                     <div className="text-xs text-gray-400">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </div>
+                  </div>
                 </div>
-            </div>
-          </div>
-          ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {showOwnerModal && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50"
+          onClick={() => setShowOwnerModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-xl p-6 w-[400px] shadow-xl"
+          >
+            <h3 className="text-lg font-bold mb-4">Owner Information</h3>
+
+            <p>
+              Name:
+              {item.reportedBy?.fullName}
+            </p>
+
+            <p>
+              Email:
+              {item.reportedBy?.email}
+            </p>
+
+            <button
+              onClick={() => setShowOwnerModal(false)}
+              className="mt-4 w-full py-2 bg-blue-600 text-white rounded-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-gray-200 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
