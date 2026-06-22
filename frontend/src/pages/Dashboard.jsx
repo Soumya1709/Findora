@@ -232,8 +232,7 @@ const fetchNotifications = async () => {
     const res =
       await getNotifications();
 
-    setNotifications(
-      res.data.notifications
+    setNotifications(res.data.notifications.filter((n) => !n.isRead)
     );
   } catch (error) {
     console.error(error);
@@ -245,13 +244,15 @@ useEffect(() => {
 }, []);
 
 const handleNotificationClick =
-  async (id) => {
+  async (notification) => {
     try {
       await markNotificationRead(
-        id
+        notification._id
       );
 
-      fetchNotifications();
+      navigate(
+        `/claims/${notification.claimId}`
+      );
     } catch (error) {
       console.error(error);
     }
@@ -320,7 +321,7 @@ const avatarInitials =
         notifications.map((n) => (
           <div
              key={n._id}
-             onClick={() =>navigate(`/claims/${n.claimId}`)}
+             onClick={() =>handleNotificationClick(n)}
              className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${!n.isRead? "bg-blue-50": ""}`}
            >
             <div className="font-medium text-sm">

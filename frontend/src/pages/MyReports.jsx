@@ -411,11 +411,11 @@ export default function MyReports() {
 };
 
 const activeReports = reports.filter(
-  (item) => item.badgeType === "active"
+  (item) => item.status === "active"
 ).length;
 
 const returnedItems = reports.filter(
-  (item) => item.badgeType === "returned"
+  (item) => item.status === "returned"
 ).length;
 
 const matchAlerts = 0; // until AI matching is built
