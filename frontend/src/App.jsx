@@ -7,6 +7,7 @@ import MyReports from "./pages/MyReports";
 import BrowseItems from "./pages/BrowseItems";
 import ItemsDetails from "./pages/ItemsDetails";
 import ClaimPage from "./pages/Claim";
+import Settings from "./pages/Settings"
 
 import Home from "./pages/Home";
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/browse" element={<BrowseItems />} />
         <Route path="/item/:id" element={<ItemsDetails />}/>
         <Route path="/claims/:id" element={<ClaimPage />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );
