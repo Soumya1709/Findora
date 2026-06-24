@@ -512,14 +512,14 @@ const fetchReports = async () => {
 
   const filtered = reports.filter((r) => {
   const matchSearch =
-    r.name.toLowerCase().includes(search.toLowerCase()) ||
-    r.category.toLowerCase().includes(search.toLowerCase());
+    r.title?.toLowerCase().includes(search.toLowerCase()) ||
+    r.category?.toLowerCase().includes(search.toLowerCase());
 
   if (activeFilter === "All") return matchSearch;
   if (activeFilter === "Lost")
-    return r.status === "lost" && matchSearch;
+    return r.type === "lost" && matchSearch;
   if (activeFilter === "Found")
-    return r.status === "found" && matchSearch;
+    return r.type === "found" && matchSearch;
 
   return r.category === activeFilter && matchSearch;
 });

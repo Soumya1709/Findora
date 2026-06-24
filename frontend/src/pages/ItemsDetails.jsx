@@ -1,7 +1,7 @@
 import { useState,useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getItemById,getSimilarItems} from "../services/itemService";
-import { createClaim } from "../services/claimService";
+import { createClaim,checkCanViewOwner } from "../services/claimService";
 
 const Logo = ({ className = "" }) => (
   <span className={`font-bold text-xl tracking-tight ${className}`}>
@@ -154,11 +154,31 @@ export default function ItemsDetails() {
   const [loading, setLoading] = useState(true);
   const [similarItems, setSimilarItems] = useState([]);
   const [showOwnerModal,setShowOwnerModal] = useState(false);
-  const canViewOwner = true;
+  const [canViewOwner,setCanViewOwner] = useState(false);
   const navigate=useNavigate();
   
   useEffect(() => {
   fetchItem();
+}, [id]);
+
+  useEffect(() => {
+  const fetchPermission =
+    async () => {
+      try {
+        const res =
+          await checkCanViewOwner(
+            id
+          );
+
+        setCanViewOwner(
+          res.data.canViewOwner
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  fetchPermission();
 }, [id]);
 
 const fetchItem = async () => {
@@ -367,7 +387,7 @@ const handleClaim = async () => {
 
             {/* CTA */}
             {
-               item.type === "found" && item.reportedBy !== user._id && (
+               item.type === "found" && item.reportedBy?._id !== user._id && (
                <button
                   onClick={handleClaim} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
                <svg
@@ -511,6 +531,11 @@ const handleClaim = async () => {
             <p>
               Email:
               {item.reportedBy?.email}
+            </p>
+
+            <p>
+              Phone:
+              {item.reportedBy?.phoneNumber}
             </p>
 
             <button

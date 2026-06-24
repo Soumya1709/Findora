@@ -568,7 +568,7 @@ function Step3({ form, setForm, previewImg, setPreviewImg }) {
         />
         <span className="text-xs text-gray-500 leading-relaxed">
           I confirm this information is accurate and agree to{" "}
-          <a href="#" className="text-blue-600 hover:underline font-medium">CampusFound's community guidelines</a>
+          <a href="#" className="text-blue-600 hover:underline font-medium">Findora's community guidelines</a>
         </span>
       </label>
     </div>

@@ -26,3 +26,6 @@ export const updateClaimStatus = (claimId,status) =>
 
 export const getClaimById = (id) =>
   claimAPI.get(`/${id}`);
+
+export const checkCanViewOwner =(itemId) =>
+    claimAPI.get(`/can-view-owner/${itemId}`);
