@@ -570,19 +570,29 @@ if (loading) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
-                Filter
+                {activeFilter}
               </button>
               {filterOpen && (
-                <div className="absolute right-0 top-10 bg-white border border-gray-100 rounded-2xl shadow-xl z-20 p-3 w-44 space-y-1">
-                  {["All Statuses", "Lost", "Found", "Returned", "Archived"].map((o) => (
-                    <button key={o} onClick={() => { setFilterOpen(false); }}
-                      className="w-full text-left text-xs font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-700 px-3 py-2 rounded-lg transition-colors">
-                      {o}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+  <div className="absolute right-0 top-10 bg-white border border-gray-100 rounded-2xl shadow-xl z-20 p-3 w-44 space-y-1">
+    {["All", "Lost", "Found"].map((o) => (
+      <button
+        key={o}
+        onClick={() => {
+          setActiveFilter(o);
+          setFilterOpen(false);
+        }}
+        className={`w-full text-left text-xs font-medium px-3 py-2 rounded-lg transition-colors ${
+          activeFilter === o
+            ? "bg-blue-50 text-blue-700"
+            : "text-gray-600 hover:bg-gray-50"
+        }`}
+      >
+        {o}
+      </button>
+    ))}
+  </div>
+)}
+</div>
 
             {/* Sort */}
             <div className="relative">

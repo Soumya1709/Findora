@@ -1,4 +1,9 @@
+import { useNavigate } from "react-router-dom";
 export default function Hero() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const isLoggedIn = !!token;
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-14">
       <div className="flex flex-col md:flex-row items-center gap-10">
@@ -17,24 +22,22 @@ export default function Hero() {
             your items back home.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-md shadow-blue-200"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Report Lost Item
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 border border-gray-300 hover:border-blue-400 text-gray-700 hover:text-blue-600 text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors bg-white"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Browse Found Items
-            </a>
+            <button onClick={() => {if (isLoggedIn) { navigate("/report");} else {navigate("/login");}}}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-md shadow-blue-200">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+
+           Report Lost Item
+           </button>
+          <button onClick={() => {if (isLoggedIn) { navigate("/browse");} else {navigate("/login");}}}
+          className="inline-flex items-center gap-2 border border-gray-300 hover:border-blue-400 text-gray-700 hover:text-blue-600 text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors bg-white">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+
+          Browse Found Items
+          </button>
           </div>
         </div>
 
