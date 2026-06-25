@@ -119,6 +119,27 @@ export const updateClaimStatus = async (req,res) => {
   }
 };
 
+export const canViewOwner = async (req,res) => {
+  try {
+    const claim =
+      await Claim.findOne({
+        item: req.params.itemId,
+        claimant: req.user.userId,
+        status: "approved",
+      });
+
+    res.status(200).json({
+      success: true,
+      canViewOwner: !!claim,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const getMyItemClaims = async (req,res) => {
   try {
     const claims = await Claim.find()

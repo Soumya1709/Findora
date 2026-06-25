@@ -101,7 +101,7 @@ export const getAllItems = async (req, res) => {
 export const getItemById = async (req, res) => {
   try {
     const item = await Item.findById(req.params.id)
-      .populate("reportedBy", "fullName email");
+      .populate("reportedBy", "fullName email phoneNumber");
 
     if (!item) {
       return res.status(404).json({
