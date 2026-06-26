@@ -231,6 +231,7 @@ const handleClaim = async () => {
     );
 
     console.log(res.data);
+    
 
     alert(
       "Claim request submitted successfully"
@@ -244,6 +245,7 @@ const handleClaim = async () => {
     );
   }
 };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -387,7 +389,7 @@ const handleClaim = async () => {
 
             {/* CTA */}
             {
-               item.type === "found" && item.reportedBy?._id !== user._id && (
+               item.type === "found" && item.reportedBy?._id !== user.id && (
                <button
                   onClick={handleClaim} className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
                <svg

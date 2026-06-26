@@ -449,7 +449,9 @@ const fetchItems = async () => {
       brand: item.brand,
       category: item.category,
       location: item.location?.name || "Unknown Location",
-      time: new Date(item.createdAt).toLocaleDateString(),
+      time: new Date(item.dateLostOrFound).toLocaleDateString(),
+      dateLostOrFound: item.dateLostOrFound,
+      reportedBy: item.reportedBy,
       status: item.type,
       confidence: item.matchScore || null,
       img:
@@ -464,6 +466,7 @@ const fetchItems = async () => {
     setLoading(false);
   }
 };
+   
 
   const toggleCategory = (cat) => {
     setCategoryFilters((prev) =>
@@ -472,7 +475,6 @@ const fetchItems = async () => {
   };
 
   const removeCategory = (cat) => setCategoryFilters((prev) => prev.filter((c) => c !== cat));
-
   const filtered = items.filter((item) => {
     const matchStatus =
       statusFilter === "All" ||
@@ -480,13 +482,19 @@ const fetchItems = async () => {
     const matchCategory =
       categoryFilters.length === 0 ||
       categoryFilters.includes(item.category);
+     const matchLocation =location === "All Locations" ||item.location?.name === location;
+      const matchDate =
+  !date ||
+  item.dateLostOrFound?.slice(0, 10) === date;
+  
+
     const matchSearch =
-  item.name?.toLowerCase().includes(search.toLowerCase()) ||
+  item.title?.toLowerCase().includes(search.toLowerCase()) ||
   item.category?.toLowerCase().includes(search.toLowerCase()) ||
   item.location?.toLowerCase().includes(search.toLowerCase()) ||
   item.description?.toLowerCase().includes(search.toLowerCase()) ||
   item.brand?.toLowerCase().includes(search.toLowerCase());
-    return matchStatus && matchCategory && matchSearch;
+    return matchStatus && matchCategory &&  matchLocation && matchDate && matchSearch;
   });
 
   const paginated = filtered.slice(
