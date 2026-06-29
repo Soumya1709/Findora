@@ -47,6 +47,7 @@ const initials =
     .map((word) => word[0])
     .join("")
     .toUpperCase() || "U";
+const navigate = useNavigate();
   return (
     <header className="h-13 bg-white border-b border-gray-100 flex items-center justify-between px-6 flex-shrink-0">
       <div className="flex items-center gap-6">
@@ -59,17 +60,25 @@ const initials =
           </div>
           <span className="font-extrabold text-gray-900 text-[15px]">Findora</span>
         </div>
-        <nav className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((l) => (
-            <button key={l}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
-                ${l === "Report"
-                  ? "text-blue-600 border-b-2 border-blue-600 rounded-none pb-[14px]"
-                  : "text-gray-500 hover:text-gray-900"}`}>
-              {l}
-            </button>
-          ))}
-        </nav>
+        <nav className="hidden md:flex items-center gap-1 text-sm">
+         {["Browse", "Report", "Matching"].map((l) => (
+         <button
+            key={l}
+            onClick={() => {
+            if (l === "Browse") {
+              navigate("/browse");
+            } else if (l === "Report") {
+              navigate("/report");
+            } else if (l === "Matching") {
+              navigate("/matching");
+            }
+          }}
+           className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              l === "Browse"? "text-blue-600 font-semibold border-b-2 border-blue-600 rounded-none": "text-gray-500 hover:text-gray-900 hover:bg-gray-50"}`}>
+             {l}
+          </button>
+        ))}
+      </nav>
       </div>
       <div className="flex items-center gap-2">
         <button className="relative w-8 h-8 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
@@ -79,7 +88,7 @@ const initials =
           </svg>
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
         </button>
-        <button className="w-8 h-8 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
+        <button onClick={()=> navigate("/settings")}className="w-8 h-8 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />

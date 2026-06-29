@@ -1,5 +1,6 @@
 import { useState,useEffect } from "react";
 import { updateProfile } from "../services/userService";
+import { useNavigate } from "react-router-dom";
 
 const Logo = ({ className = "" }) => (
   <span className={`font-bold text-xl tracking-tight ${className}`}>
@@ -29,6 +30,7 @@ const CheckCircleIcon = ({ className = "w-4 h-4" }) => (
 );
 
 export default function Settings() {
+  const navigate=useNavigate();
   const [form, setForm] = useState({
     fullName: "",
     studentId: "",
@@ -88,16 +90,23 @@ export default function Settings() {
         <div className="max-w-5xl mx-auto px-6 flex items-center gap-6" style={{ height: 52 }}>
           <Logo />
           <div className="flex gap-1 flex-1">
-            {["Browse", "Report", "Matching"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-sm font-medium px-3 py-1.5 rounded-md transition-colors text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-              >
-                {item}
-              </a>
+             {["Browse", "Report", "Matching"].map((item, i) => (
+          <button
+            key={item}
+            onClick={() => {
+            if (item === "Browse") {
+              navigate("/browse");
+            } else if (item === "Report") {
+              navigate("/report");
+            } else if (item === "Matching") {
+              navigate("/matching");
+            }
+          }}className={`text-sm font-medium px-3 py-1.5 rounded-md transition-colors ${
+             i === 0 ? "text-blue-600 bg-blue-50": "text-gray-500 hover:text-gray-800 hover:bg-gray-100"}`}>
+           {item}
+            </button>
             ))}
-          </div>
+         </div>
           <div className="flex items-center gap-3 ml-auto">
             <button className="text-gray-400 hover:text-gray-700 transition-colors"><BellIcon /></button>
             <button className="text-blue-600"><GearIcon /></button>

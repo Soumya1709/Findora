@@ -146,16 +146,22 @@ const initials =
             <span className="font-extrabold text-gray-900 text-[15px] tracking-tight">Findora</span>
           </a>
           <nav className="hidden md:flex items-center gap-1 text-sm">
-            {["Feed", "Map", "Analytics", "Help"].map((l) => (
-              <a key={l} href="#"
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors
-                  ${l === "Analytics"
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"}`}>
-                {l}
-              </a>
-            ))}
-          </nav>
+            {[
+               { label: "Home", path: "/dashboard" },
+               { label: "Browse Items", path: "/browse" },
+               { label: "My Reports", path: "/my-reports" },
+               { label: "Claims", path: "/claims/:id" },
+               { label: "Settings", path: "/settings" },
+            ].map((item) => (
+          <button
+            key={item.label}
+            onClick={() => navigate(item.path)}
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            location.pathname === item.path? "text-blue-600 bg-blue-50": "text-gray-500 hover:text-gray-900 hover:bg-gray-50"}`}>
+              {item.label}
+          </button>
+           ))}
+        </nav>
         </div>
 
         {/* Right */}
