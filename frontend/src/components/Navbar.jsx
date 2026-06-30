@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logo from "../assets/findora.png";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function Navbar() {
   const isLoggedIn = !!token;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+    <motion.nav initial={{ opacity: 0, y: -30 }}animate={{ opacity: 1, y: 0 }}transition={{duration: 0.6,ease: "easeOut",}}className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
@@ -90,6 +91,6 @@ export default function Navbar() {
           <a href="#">Support</a>
         </div>
       )}
-    </nav>
+    </motion.nav>
   );
 }

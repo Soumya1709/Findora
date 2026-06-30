@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 const steps = [
   {
     icon: (
@@ -33,34 +34,39 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div className="text-center mb-12">
+    <motion.section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20"initial={{ opacity: 0, y: 60 }}whileInView={{ opacity: 1, y: 0 }}viewport={{ once: true }}transition={{ duration: 0.8 }}>
+      <motion.div className="text-center mb-12"initial={{ opacity: 0, y: 30 }}whileInView={{ opacity: 1, y: 0 }}viewport={{ once: true }}transition={{ duration: 0.6 }}>
         <h2 className="text-3xl font-extrabold text-gray-900 mb-3">Getting Your Belongings Back</h2>
         <p className="text-gray-500 max-w-xl mx-auto text-sm leading-relaxed">
           Our streamlined process connects campus finders and losers in three simple steps using
           advanced recognition technology.
         </p>
-      </div>
+      </motion.div>
 
       <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Connector lines (desktop) */}
         <div className="hidden md:block absolute top-10 left-[33%] w-[17%] h-px bg-gradient-to-r from-blue-200 to-purple-200 z-0" />
         <div className="hidden md:block absolute top-10 left-[60%] w-[17%] h-px bg-gradient-to-r from-purple-200 to-emerald-200 z-0" />
 
-        {steps.map((s) => (
-          <div
+        {steps.map((s, index) => (
+          <motion.div
             key={s.step}
             className="relative z-10 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center gap-4"
-          >
-            <div className="w-14 h-14 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+              initial={{opacity: 0,y: 60,}}
+              whileInView={{opacity: 1,y: 0,}}
+              viewport={{once: true,}}
+              transition={{duration: 0.6,delay: index * 0.2,}}
+              whileHover={{y: -8,scale: 1.03, boxShadow: "0px 20px 40px rgba(0,0,0,0.12)",}}>
+            <motion.div className="w-14 h-14 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center"
+              whileHover={{rotate: 8,scale: 1.15,}}transition={{duration: 0.2,}}>
               {s.icon}
-            </div>
+            </motion.div>
             <span className="text-xs font-bold text-gray-300 tracking-widest">STEP {s.step}</span>
             <h3 className="text-base font-bold text-gray-900">{s.title}</h3>
             <p className="text-sm text-gray-500 leading-relaxed">{s.desc}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }
