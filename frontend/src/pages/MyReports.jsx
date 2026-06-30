@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getMyItems,deleteItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
+import Logo from "../components/Logo";
 
 /* ─── MOCK DATA ─────────────────────────────────────── */
 // const REPORTS = [
@@ -143,7 +144,7 @@ const initials =
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <span className="font-extrabold text-gray-900 text-[15px] tracking-tight">Findora</span>
+            <Logo/>
           </a>
           <nav className="hidden md:flex items-center gap-1 text-sm">
             {[

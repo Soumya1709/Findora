@@ -73,7 +73,7 @@ export default function Signup() {
       {/* Header */}
       <div className="mb-7">
         <h2 className="text-2xl font-extrabold text-gray-900 mb-1">Create your account</h2>
-        <p className="text-sm text-gray-500">Join CampusFound and recover lost items faster.</p>
+        <p className="text-sm text-gray-500">Join Findora and recover lost items faster.</p>
       </div>
 
       {/* Form */}

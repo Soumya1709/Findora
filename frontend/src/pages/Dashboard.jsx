@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getMyItems } from "../services/itemService";
 import { getNotifications,markNotificationRead } from "../services/notificationService";
+import Logo from "../components/Logo";
 
 
 const matchAlerts = [
@@ -161,7 +162,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        {!collapsed && <span className="font-extrabold text-gray-900 text-[15px] tracking-tight">Findora</span>}
+        {!collapsed && <Logo/>}
       </div>
 
       {/* Nav */}
