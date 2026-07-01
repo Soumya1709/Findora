@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import CountUp from "react-countup";
 const stats = [
   { value: 12400, suffix: "+", label: "Items Recovered" },
   { value: 98, suffix: "%", label: "Success Rate" },
@@ -16,7 +15,7 @@ export default function StatsBar() {
             <motion.div key={s.label} className="text-center"initial={{ opacity: 0, y: 40 }}whileInView={{ opacity: 1, y: 0 }}viewport={{ once: true }}transition={{duration: 0.5,delay: index * 0.15,}}
               whileHover={{y: -5,scale: 1.05,}}>
               <p className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-                <CountUp end={s.value}duration={2}enableScrollSpy scrollSpyOnce/>{s.suffix}</p>
+                {s.value}{s.suffix}</p>
               <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-gray-400">{s.label}</p>
             </motion.div>
           ))}
