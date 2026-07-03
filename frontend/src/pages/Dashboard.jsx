@@ -401,12 +401,24 @@ function DashboardContent({ search }) {
   ];
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     const s = localStorage.getItem("user");
     if (s) setUser(JSON.parse(s));
+
     (async () => {
-      try { const res = await getMyItems(); setReports(res.data.items); } catch {}
+      try {
+        const res = await getMyItems();
+        setReports(res.data.items);
+      } catch (error) {
+        console.error(error);
+      }
     })();
-  }, []);
+  }, [navigate]);
 
   const avatarInitials = user?.fullName?.split(" ").map((w) => w[0]).join("").toUpperCase() || "U";
   const memberSince = user?.createdAt
@@ -414,10 +426,10 @@ function DashboardContent({ search }) {
 
   const stats = {
     reported: reports.length,
-    recovered: reports.filter((i) => i.status === "recovered").length,
+    returned: reports.filter((i) => i.status === "returned").length,
     active: reports.filter((i) => i.status === "active").length,
   };
-  const successRate = reports.length > 0 ? Math.round((stats.recovered / stats.reported) * 100) : 0;
+  const successRate = reports.length > 0 ? Math.round((stats.returned / stats.reported) * 100) : 0;
 
   const recentReports = reports.slice(0, 3).map((item) => ({
     id: item._id, name: item.title,
@@ -440,7 +452,7 @@ function DashboardContent({ search }) {
 
   const statData = [
     { label: "Items Reported", value: stats.reported, icon: StatIcons.reported, accent: "#F59E0B", bg: "#FFFBEB" },
-    { label: "Items Recovered", value: stats.recovered, icon: StatIcons.recovered, accent: "#5BE63A", bg: "#F0FDF4" },
+    { label: "Items Returned", value: stats.returned, icon: StatIcons.recovered, accent: "#5BE63A", bg: "#F0FDF4" },
     { label: "Active Alerts", value: stats.active, icon: StatIcons.alerts, accent: "#5BE63A", bg: "#F0FDF4" },
     { label: "Success Rate", value: `${successRate}%`, icon: StatIcons.rate, accent: "#F59E0B", bg: "#FFFBEB" },
   ];

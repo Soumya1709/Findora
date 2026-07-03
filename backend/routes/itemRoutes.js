@@ -25,10 +25,10 @@ router.get("/", getAllItems);
 
 router.get("/my-items", authMiddleware, getMyItems);
 
+router.get("/similar/:id", getSimilarItems);
 router.get("/:id", getItemById);
-router.get("/similar/:id",getSimilarItems);
 
 router.delete("/:id", authMiddleware, deleteItem);
-router.put("/:id", authMiddleware, updateItem);
+router.put("/:id", authMiddleware, upload.single("image"), updateItem);
 
 export default router;

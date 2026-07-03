@@ -6,10 +6,13 @@ const claimAPI = axios.create({
 
 claimAPI.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+  config.headers = config.headers || {};
 
-  if (token) {
-    config.headers.Authorization =
-      `Bearer ${token}`;
+  if (token && token !== "undefined" && token !== "null") {
+    config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
   return config;

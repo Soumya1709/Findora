@@ -240,9 +240,65 @@ export const updateItem = async (req, res) => {
       });
     }
 
+    const {
+      title,
+      description,
+      type,
+      category,
+      primaryColor,
+      brand,
+      location,
+      campusZone,
+      locationNotes,
+      dateLostOrFound,
+    } = req.body;
+
+    const parsedLocation = location
+      ? JSON.parse(location)
+      : item.location;
+
+    const parsedDate = dateLostOrFound
+      ? new Date(dateLostOrFound)
+      : item.dateLostOrFound;
+
+    const updateData = {
+      title: title ?? item.title,
+      description: description ?? item.description,
+      type: type ?? item.type,
+      category: category ?? item.category,
+      primaryColor: primaryColor ?? item.primaryColor,
+      brand: brand ?? item.brand,
+      location: parsedLocation,
+      campusZone: campusZone ?? item.campusZone,
+      locationNotes: locationNotes ?? item.locationNotes,
+      dateLostOrFound: isNaN(parsedDate) ? item.dateLostOrFound : parsedDate,
+    };
+
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "findora",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+
+        streamifier
+          .createReadStream(req.file.buffer)
+          .pipe(stream);
+      });
+
+      updateData.images = item.images?.length
+        ? [...item.images, result.secure_url]
+        : [result.secure_url];
+    }
+
     const updatedItem = await Item.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       {
         new: true,
         runValidators: true,

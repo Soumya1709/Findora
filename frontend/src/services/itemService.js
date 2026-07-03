@@ -6,20 +6,32 @@ const API = axios.create({
 
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+  config.headers = config.headers || {};
 
-  if (token) {
+  if (token && token !== "undefined" && token !== "null") {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   }
 
   return config;
 });
 
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const createItem = (itemData) =>
-  API.post("/", itemData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  API.post("/", itemData);
 
 export const getMyItems = () =>
   API.get("/my-items");
