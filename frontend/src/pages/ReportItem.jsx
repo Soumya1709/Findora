@@ -3,17 +3,7 @@ import { createItem, updateItem } from "../services/itemService";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ═══════════════════════════════════════════════════════
-   FINDORA — REPORT ITEM PAGE (UI redesign only)
-   Same design tokens as Dashboard:
-     --forest:   #1B3A2F  sidebar/hero
-     --lime:     #5BE63A  primary accent
-     --page:     #F8FAF8
-     --ink:      #1A1A1A
-     --muted:    #667085
-     --border:   #E5E7EB
-   All logic, API calls, state, routing UNCHANGED.
-   ═══════════════════════════════════════════════════════ */
+
 
 const CATEGORIES = [
   "Electronics","Clothing","Books","ID / Cards",
@@ -58,9 +48,7 @@ const selectCls = `${inputCls} cursor-pointer appearance-none`;
 
 const labelCls = `block text-[10.5px] font-bold text-[#667085] uppercase tracking-[0.8px] mb-2`;
 
-/* ══════════════════════════════════════════════════════
-   TOPBAR — matches Dashboard topbar exactly
-   ══════════════════════════════════════════════════════ */
+
 function Topbar() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const initials = user?.fullName?.split(" ").map((w) => w[0]).join("").toUpperCase() || "U";
@@ -138,9 +126,7 @@ function Topbar() {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   PROGRESS STEPPER — Tomorro-style pill stepper
-   ══════════════════════════════════════════════════════ */
+
 function ProgressStepper({ step }) {
   return (
     <div className="mb-8">
@@ -198,9 +184,7 @@ function ProgressStepper({ step }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   LIVE PREVIEW CARD
-   ══════════════════════════════════════════════════════ */
+
 function LivePreview({ form, previewImg }) {
   return (
     <div className="sticky top-24 space-y-4">
@@ -301,9 +285,7 @@ function LivePreview({ form, previewImg }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   STEP 1 — GENERAL DETAILS
-   ══════════════════════════════════════════════════════ */
+
 function Step1({ form, setForm }) {
   return (
     <motion.div variants={{ hidden:{}, show:{ transition:{ staggerChildren:0.06 } } }} initial="hidden" animate="show"
@@ -400,9 +382,7 @@ function Step1({ form, setForm }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   STEP 2 — LOCATION & TIME
-   ══════════════════════════════════════════════════════ */
+
 function Step2({ form, setForm }) {
   return (
     <motion.div variants={{ hidden:{}, show:{ transition:{ staggerChildren:0.06 } } }} initial="hidden" animate="show"
@@ -479,9 +459,7 @@ function Step2({ form, setForm }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   STEP 3 — PHOTOS & CONTACT
-   ══════════════════════════════════════════════════════ */
+
 function Step3({ form, setForm, previewImg, setPreviewImg }) {
   const fileRef = useRef();
 
@@ -602,9 +580,7 @@ function Step3({ form, setForm, previewImg, setPreviewImg }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   MAIN PAGE — unchanged logic
-   ══════════════════════════════════════════════════════ */
+
 const initialForm = {
   type:"lost", name:"", category:"", description:"",
   primaryColor:"", colorLabel:"", brand:"",

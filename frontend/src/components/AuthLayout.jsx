@@ -2,67 +2,84 @@ import campusImage from "../assets/campus.png";
 
 export default function AuthLayout({ children }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl bg-white rounded-3xl overflow-hidden shadow-2xl grid lg:grid-cols-2">
+    <div className="min-h-screen flex items-center justify-center p-4"
+      style={{ background: "#F8FAF8" }}>
+      <div className="w-full max-w-5xl bg-white rounded-3xl overflow-hidden grid lg:grid-cols-2"
+        style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.06)", border: "1px solid #E5E7EB" }}>
 
-        {/* ── Left Panel ── */}
-        <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-10 relative overflow-hidden">
+        {/* Left panel */}
+        <div className="hidden lg:flex flex-col justify-between p-10 relative overflow-hidden"
+          style={{ background: "#1B3A2F" }}>
 
-          {/* Subtle radial glow */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-80px] left-[-80px] w-72 h-72 rounded-full bg-blue-600/10 blur-3xl" />
-            <div className="absolute bottom-[-60px] right-[-60px] w-64 h-64 rounded-full bg-blue-500/10 blur-3xl" />
-          </div>
+          {/* Decorative blobs */}
+          <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full pointer-events-none opacity-10"
+            style={{ background: "#5BE63A" }}/>
+          <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full pointer-events-none opacity-8"
+            style={{ background: "#5BE63A" }}/>
 
           {/* Logo */}
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <div className="flex items-center gap-2.5 mb-7">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                style={{ background: "#5BE63A", boxShadow: "0 4px 14px rgba(91,230,58,0.3)" }}>
+                <svg width="17" height="17" fill="none" stroke="#1B3A2F" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
               </div>
-              <h1 className="text-lg font-extrabold tracking-tight">Findora</h1>
+              <span className="font-black text-[20px] tracking-tight text-white">
+                Find<span style={{ color: "#5BE63A" }}>ora</span>
+              </span>
             </div>
 
-            <p className="text-2xl font-bold leading-snug text-white/90">
-              Your Campus. Your Stuff.
-              <br />
-              <span className="text-blue-400">Found Faster.</span>
+            <p className="text-[26px] font-black leading-tight tracking-tight text-white">
+              Your Campus.<br/>Your Stuff.
+              <br/>
+              <span style={{ color: "#5BE63A" }}>Found Faster.</span>
             </p>
-            <p className="mt-3 text-sm text-white/50 leading-relaxed max-w-xs">
-              The ultimate lost and found ecosystem designed for modern campuses. Rapid recovery, secure verification, and peace of mind.
+            <p className="mt-3 text-[13.5px] leading-relaxed max-w-xs"
+              style={{ color: "rgba(255,255,255,0.5)" }}>
+              The ultimate lost and found ecosystem designed for modern campuses.
+              Rapid recovery, secure verification, and peace of mind.
             </p>
           </div>
 
           {/* Campus image */}
-          <div className="flex justify-center relative z-10">
-            <div className="w-72 h-72 rounded-3xl overflow-hidden rotate-6 shadow-2xl ring-1 ring-white/10">
-              <img src={campusImage} alt="Campus" className="w-full h-full object-cover" />
+          <div className="flex justify-center relative z-10 my-2">
+            <div className="w-64 h-64 rounded-2xl overflow-hidden"
+              style={{
+                transform: "rotate(4deg)",
+                boxShadow: "0 20px 50px rgba(0,0,0,0.4)",
+                border: "1px solid rgba(255,255,255,0.12)",
+              }}>
+              <img src={campusImage} alt="Campus" className="w-full h-full object-cover"/>
             </div>
           </div>
 
-          {/* Badges */}
+          {/* Tags */}
           <div className="relative z-10 space-y-3">
             <div className="flex flex-wrap gap-2">
               {["Verified ID", "Instant Alerts", "Smart Matching"].map((tag) => (
-                <span key={tag} className="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs font-medium text-white/80 backdrop-blur-sm">
+                <span key={tag}
+                  className="px-3 py-1.5 rounded-full text-[11.5px] font-semibold"
+                  style={{ background: "rgba(91,230,58,0.12)", color: "rgba(255,255,255,0.75)", border: "1px solid rgba(91,230,58,0.2)" }}>
                   {tag}
                 </span>
               ))}
             </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-xs font-semibold shadow-lg shadow-emerald-900/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-white/80 inline-block animate-pulse"></span>
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11.5px] font-bold"
+                style={{ background: "#5BE63A", color: "#1B3A2F" }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse inline-block"/>
                 Community Powered
               </span>
-              <span className="text-xs text-white/40">10,000+ items returned last semester</span>
+              <span className="text-[11.5px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+                10,000+ items returned last semester
+              </span>
             </div>
           </div>
         </div>
 
-        {/* ── Right Panel ── */}
+        {/* Right panel */}
         <div className="p-8 sm:p-12 flex items-center justify-center bg-white">
           <div className="w-full max-w-md">{children}</div>
         </div>

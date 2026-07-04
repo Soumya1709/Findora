@@ -1,10 +1,7 @@
-const Logo = ({ className = "" }) => {
-  return (
-    <span className={`font-bold text-xl tracking-tight ${className}`}>
-      <span className="text-gray-900">Find</span>
-      <span className="text-blue-500">ora</span>
-    </span>
-  );
-};
-
+const Logo = ({ className = "" }) => (
+  <span className={`font-black tracking-tight ${className}`} style={{ fontSize: "inherit" }}>
+    <span style={{ color: "#1A1A1A" }}>Find</span>
+    <span style={{ color: "#5BE63A" }}>ora</span>
+  </span>
+);
 export default Logo;

@@ -4,17 +4,7 @@ import { getMyItems, deleteItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 
-/* ═══════════════════════════════════════════════════════
-   FINDORA — MY REPORTS PAGE  (UI redesign only)
-   Same design system as Dashboard & ReportItem:
-     --forest:  #1B3A2F  navbar logo / dark panels
-     --lime:    #5BE63A  primary accent
-     --page:    #F8FAF8
-     --ink:     #1A1A1A
-     --muted:   #667085
-     --border:  #E5E7EB
-   All logic, API calls, state, and routing UNCHANGED.
-   ═══════════════════════════════════════════════════════ */
+
 
 const MATCH_ALERTS = [
   { id:1, item:"MacBook Case",  location:"Found at Cafe", confidence:84,
@@ -71,9 +61,7 @@ function ConfidenceRing({ value }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   NAVBAR  — identical visual style to Dashboard topbar
-   ══════════════════════════════════════════════════════ */
+
 function Navbar() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -106,7 +94,7 @@ function Navbar() {
             { label:"Home",       path:"/dashboard" },
             { label:"Browse",     path:"/browse" },
             { label:"My Reports", path:"/my-reports" },
-            { label:"Claims",     path:"/claims" },
+            { label:"Claims",     path:"/claims/:id" },
             { label:"Settings",   path:"/settings" },
           ].map((item)=>{
             const active = item.path==="/my-reports";
@@ -149,9 +137,7 @@ function Navbar() {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   ITEM CARD
-   ══════════════════════════════════════════════════════ */
+
 function ItemCard({ item, onDelete, onEdit }) {
   const navigate = useNavigate();
 
@@ -281,9 +267,7 @@ function ItemCard({ item, onDelete, onEdit }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   AI MATCH PANEL — dark forest, same as Dashboard alerts
-   ══════════════════════════════════════════════════════ */
+
 function AIMatchPanel() {
   return (
     <div className="rounded-2xl overflow-hidden" style={{ border:"1px solid #E5E7EB" }}>
@@ -348,9 +332,7 @@ function AIMatchPanel() {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   FOOTER
-   ══════════════════════════════════════════════════════ */
+
 function Footer() {
   return (
     <footer className="mt-16" style={{ background:"#1B3A2F", borderTop:"1px solid rgba(255,255,255,0.06)" }}>
@@ -401,9 +383,7 @@ function Footer() {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   MAIN PAGE  — all logic UNCHANGED
-   ══════════════════════════════════════════════════════ */
+
 export default function MyReports() {
   const [reports,      setReports]      = useState([]);
   const [editingItem,  setEditingItem]  = useState(null);
