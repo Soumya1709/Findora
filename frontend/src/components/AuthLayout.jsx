@@ -1,4 +1,4 @@
-import campusImage from "../assets/campus.png";
+import campusImage from "../assets/campus3.png";
 
 export default function AuthLayout({ children }) {
   return (
