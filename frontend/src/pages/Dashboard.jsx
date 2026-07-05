@@ -93,9 +93,7 @@ function ConfidenceRing({ value }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   SIDEBAR
-   ══════════════════════════════════════════════════════ */
+
 function Sidebar({ active, setActive, collapsed, setCollapsed }) {
   const navigate = useNavigate();
   const handleLogout = () => {

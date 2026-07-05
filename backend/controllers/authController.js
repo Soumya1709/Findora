@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import axios from "axios";
+import Item from "../models/Item.js";
+import Claim from "../models/Claim.js";
 
 
 const client = new OAuth2Client(
@@ -162,6 +164,32 @@ export const loginUser = async (req, res) => {
         stats: user.stats,
         createdAt: user.createdAt,
       },
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    
+    await Item.deleteMany({ reportedBy: userId });
+
+    
+    await Claim.deleteMany({ claimant: userId });
+
+   
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Account deleted successfully",
     });
 
   } catch (error) {

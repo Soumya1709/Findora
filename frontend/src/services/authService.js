@@ -12,3 +12,6 @@ export const googleLogin = (accessToken) =>
 
 export const login = (userData) =>
   API.post("/login", userData);
+
+export const deleteAccount = () =>
+  API.delete("/delete-account");

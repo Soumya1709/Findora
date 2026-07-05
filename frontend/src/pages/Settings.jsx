@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateProfile } from "../services/userService";
 import { useNavigate } from "react-router-dom";
+import { deleteAccount } from "../services/authService";
 
 
 
@@ -135,9 +136,7 @@ function Topbar({ initials }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   MAIN PAGE — all logic UNCHANGED
-   ══════════════════════════════════════════════════════ */
+
 export default function Settings() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Profile");
@@ -184,6 +183,30 @@ export default function Settings() {
   };
 
   const initials = form.fullName?.split(" ").map((n) => n[0]).join("").toUpperCase() || "U";
+
+  const handleDeleteAccount = async () => {
+  const confirmDelete = window.confirm(
+    "Are you sure?\n\nThis will permanently delete your account, reports, and claims."
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await deleteAccount();
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    alert("Account deleted successfully.");
+
+    navigate("/");
+  } catch (error) {
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete account."
+    );
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F8FAF8" }}>
@@ -277,7 +300,7 @@ export default function Settings() {
               <p className="text-[10px] font-bold uppercase tracking-[0.8px] mb-2.5" style={{ color: "#EF4444" }}>
                 Danger Zone
               </p>
-              <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
+              <motion.button onClick={handleDeleteAccount} whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
                 className="w-full py-2.5 rounded-xl text-[12.5px] font-semibold transition-all duration-150"
                 style={{ background: "#FEF2F2", color: "#EF4444", border: "1.5px solid #FEE2E2" }}
                 onMouseEnter={e => { e.currentTarget.style.background = "#EF4444"; e.currentTarget.style.color = "#fff"; }}
