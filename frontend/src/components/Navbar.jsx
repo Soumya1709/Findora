@@ -88,7 +88,7 @@ export default function Navbar() {
                 <motion.button
                   whileHover={{ y: -2, boxShadow: "0 8px 20px rgba(91,230,58,0.3)" }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate("/login")}
                   className="px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-150"
                   style={{ background: "#1B3A2F", color: "#5BE63A", boxShadow: "0 3px 10px rgba(27,58,47,0.2)" }}>
                   Register
