@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const notificationAPI = axios.create({
-  baseURL: "http://localhost:5000/api/notifications",
+  baseURL: `${import.meta.env.VITE_API_URL}/api/notifications`,
 });
 
 notificationAPI.interceptors.request.use((config) => {

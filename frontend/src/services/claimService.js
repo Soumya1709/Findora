@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const claimAPI = axios.create({
-  baseURL: "http://localhost:5000/api/claims",
+  baseURL: `${import.meta.env.VITE_API_URL}/api/claims`,
 });
 
 claimAPI.interceptors.request.use((config) => {
