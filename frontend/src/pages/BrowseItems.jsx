@@ -2,19 +2,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllItems } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
-import Logo from "../components/Logo";
 
-/* ═══════════════════════════════════════════════════════
-   FINDORA — BROWSE ITEMS  (UI redesign only)
-   Same design system as Dashboard / ReportItem / MyReports:
-     --forest:  #1B3A2F   sidebar bg / logo mark / dark panels
-     --lime:    #5BE63A   active accent / primary CTA
-     --page:    #F8FAF8
-     --ink:     #1A1A1A
-     --muted:   #667085
-     --border:  #E5E7EB
-   All logic, API calls, state, and routing UNCHANGED.
-   ═══════════════════════════════════════════════════════ */
+
+
 
 const LOCATIONS = [
   "All Locations","Main Library","Engineering Quad","Science Block",

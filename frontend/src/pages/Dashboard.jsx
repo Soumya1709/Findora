@@ -3,21 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMyItems } from "../services/itemService";
 import { getNotifications, markNotificationRead } from "../services/notificationService";
-import Logo from "../components/Logo";
 
-/* ═══════════════════════════════════════════════════════
-   FINDORA — PREMIUM DASHBOARD
-   Design System:
-     --forest:     #1B3A2F  sidebar / hero
-     --forest-mid: #234D3D  hero gradient end
-     --lime:       #5BE63A  primary accent
-     --lime-hover: #6EF14A  hover
-     --page:       #F8FAF8  page bg
-     --card:       #FFFFFF
-     --ink:        #1A1A1A
-     --muted:      #667085
-     --border:     #E5E7EB
-   ═══════════════════════════════════════════════════════ */
+
+
 
 /* ── ANIMATION VARIANTS ───────────────────────────────── */
 const fadeUp = {

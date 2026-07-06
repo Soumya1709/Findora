@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMyItems, deleteItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
-import Logo from "../components/Logo";
+
 
 
 
