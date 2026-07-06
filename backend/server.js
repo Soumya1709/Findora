@@ -20,7 +20,15 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://findora-gray.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
@@ -28,9 +36,8 @@ app.use("/api/claims", claimRoutes);
 app.use("/api/notifications",notificationRoutes);
 app.use("/api/users",userRoutes);
 
-app.use(cors());
-app.use(express.json());
-app.use("/api/auth", authRoutes);
+
+
 
 app.get("/", (req, res) => {
   res.send("Findora API Running");
