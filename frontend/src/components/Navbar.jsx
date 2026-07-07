@@ -16,6 +16,16 @@ export default function Navbar() {
     { label: "Report Found",    action: () => navigate(isLoggedIn ? "/report"    : "/login") },
     { label: "Success Stories", action: () => {} },
   ];
+  const user = JSON.parse(localStorage.getItem("user"));
+
+const initials = user?.fullName
+  ? user.fullName
+      .split(" ")
+      .map((name) => name[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase()
+  : "U";
 
   return (
     <motion.nav
@@ -70,11 +80,17 @@ export default function Navbar() {
             </button>
 
             {isLoggedIn ? (
-              <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
-                className="w-9 h-9 rounded-full overflow-hidden cursor-pointer"
-                style={{ border: "2px solid #E5E7EB" }}>
-                <img src="https://i.pravatar.cc/36" alt="User" className="w-full h-full object-cover"/>
-              </motion.div>
+             <motion.div
+               whileHover={{ scale: 1.06 }}
+               whileTap={{ scale: 0.94 }}
+               className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer font-bold text-sm shadow-md"
+               style={{
+                 background: "#1B3A2F",
+                 color: "#5BE63A",
+                 border: "2px solid #E5E7EB",
+              }}>
+              {initials}
+             </motion.div>
             ) : (
               <>
                 <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}

@@ -38,13 +38,18 @@ const fadeUp = {
 };
 
 /* ── SHARED INPUT CLASSES ───────────────────────────── */
-const inputCls = `w-full px-4 py-3 text-[13.5px] rounded-xl border bg-[#F8FAF8]
+const inputCls = (hasError = false) => `
+  w-full px-4 py-3 text-[13.5px] rounded-xl border bg-[#F8FAF8]
   placeholder-gray-400 text-[#1A1A1A] transition-all duration-150 outline-none
-  border-[#E5E7EB]
-  hover:border-[#5BE63A]/50 hover:bg-white
-  focus:border-[#5BE63A] focus:bg-white focus:ring-4 focus:ring-[#5BE63A]/10`;
-
-const selectCls = `${inputCls} cursor-pointer appearance-none`;
+  hover:bg-white
+  ${
+    hasError
+      ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-200"
+      : "border-[#E5E7EB] hover:border-[#5BE63A]/50 focus:border-[#5BE63A] focus:ring-4 focus:ring-[#5BE63A]/10"
+  }
+`;
+const selectCls = (hasError = false) =>
+  `${inputCls(hasError)} cursor-pointer appearance-none`;
 
 const labelCls = `block text-[10.5px] font-bold text-[#667085] uppercase tracking-[0.8px] mb-2`;
 
@@ -286,7 +291,8 @@ function LivePreview({ form, previewImg }) {
 }
 
 
-function Step1({ form, setForm }) {
+function Step1({ form, setForm,errors,setErrors }) {
+  
   return (
     <motion.div variants={{ hidden:{}, show:{ transition:{ staggerChildren:0.06 } } }} initial="hidden" animate="show"
       className="space-y-6">
@@ -321,14 +327,20 @@ function Step1({ form, setForm }) {
         <div>
           <label className={labelCls}>Item Name</label>
           <input type="text" placeholder="e.g., MacBook Pro 14, Blue Hydro Flask"
-            value={form.name} onChange={(e) => setForm({ ...form, name:e.target.value })}
-            className={inputCls}/>
+            value={form.name} onChange={(e) => {setForm({...form,name: e.target.value,});setErrors({...errors,name: "",});}}
+            className={inputCls(errors.name)}/>
+          {errors.name && (
+           <p className="mt-1 text-xs text-red-500 font-medium">
+             {errors.name}
+           </p>
+          )}
         </div>
         <div>
           <label className={labelCls}>Category</label>
           <div className="relative">
-            <select value={form.category} onChange={(e) => setForm({ ...form, category:e.target.value })}
-              className={selectCls}>
+            <select value={form.category} onChange={(e) => {setForm({ ...form, category:e.target.value });setErrors({...errors,category: "",});}}
+              className={selectCls(errors.category)}
+            >
               <option value="">Select category…</option>
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
@@ -336,6 +348,11 @@ function Step1({ form, setForm }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
             </svg>
           </div>
+          {errors.category && (
+          <p className="mt-1 text-xs text-red-500 font-medium">
+             {errors.category}
+          </p>
+          )}
         </div>
       </motion.div>
 
@@ -343,8 +360,14 @@ function Step1({ form, setForm }) {
       <motion.div variants={fadeUp}>
         <label className={labelCls}>Description</label>
         <textarea rows={4} placeholder="Describe unique features, scratches, stickers, or any identifying marks…"
-          value={form.description} onChange={(e) => setForm({ ...form, description:e.target.value })}
-          className={`${inputCls} resize-none`}/>
+          value={form.description} onChange={(e) => {setForm({ ...form, description:e.target.value });setErrors({...errors,description: "",});}}
+          className={inputCls(errors.description) + " resize-none"}
+          />
+          {errors.description && (
+           <p className="mt-1 text-xs text-red-500">
+             {errors.description}
+           </p>
+          )} 
         <div className="flex justify-end mt-1.5">
           <span className="text-[11px]" style={{ color:"#9CA3AF" }}>{form.description.length}/1000</span>
         </div>
@@ -375,7 +398,7 @@ function Step1({ form, setForm }) {
           <label className={labelCls}>Brand</label>
           <input type="text" placeholder="e.g., Apple, Nike, Sony"
             value={form.brand} onChange={(e) => setForm({ ...form, brand:e.target.value })}
-            className={inputCls}/>
+            className={inputCls(false)}/>
         </div>
       </motion.div>
     </motion.div>
@@ -383,7 +406,8 @@ function Step1({ form, setForm }) {
 }
 
 
-function Step2({ form, setForm }) {
+function Step2({ form, setForm, errors, setErrors }) {
+  
   return (
     <motion.div variants={{ hidden:{}, show:{ transition:{ staggerChildren:0.06 } } }} initial="hidden" animate="show"
       className="space-y-6">
@@ -396,8 +420,13 @@ function Step2({ form, setForm }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
           <input type="text" placeholder="e.g., Main Library, 3rd Floor Reading Room"
-            value={form.locationName} onChange={(e) => setForm({ ...form, locationName:e.target.value })}
-            className={`${inputCls} pl-11`}/>
+            value={form.locationName} onChange={(e) => {setForm({ ...form, locationName:e.target.value });setErrors({...errors,locationName: "",});}}
+           className={inputCls(errors.locationName) + " pl-11"}/>
+          {errors.locationName && (
+          <p className="mt-1 text-xs text-red-500">
+               {errors.locationName}
+          </p>
+          )}
         </div>
       </motion.div>
 
@@ -405,7 +434,7 @@ function Step2({ form, setForm }) {
         <label className={labelCls}>Campus Zone</label>
         <div className="relative">
           <select value={form.campusZone} onChange={(e) => setForm({ ...form, campusZone:e.target.value })}
-            className={selectCls}>
+            className={selectCls(errors.campusZone)}>
             <option value="">Select campus zone…</option>
             {CAMPUS_ZONES.map((z) => <option key={z}>{z}</option>)}
           </select>
@@ -439,13 +468,25 @@ function Step2({ form, setForm }) {
       <motion.div variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className={labelCls}>Date {form.type==="lost"?"Lost":"Found"}</label>
-          <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date:e.target.value })}
-            className={inputCls}/>
+          <input type="date" value={form.date} onChange={(e) => {setForm({...form,date: e.target.value,});setErrors({...errors,date: "",});}}
+            className={inputCls(errors.date)}
+          />
+          {errors.date && (
+            <p className="mt-1 text-xs text-red-500">
+          {errors.date}
+            </p>
+          )}
         </div>
         <div>
           <label className={labelCls}>Approx. Time</label>
-          <input type="time" value={form.time} onChange={(e) => setForm({ ...form, time:e.target.value })}
-            className={inputCls}/>
+          <input type="time" value={form.time} onChange={(e) => {setForm({...form,time: e.target.value,});setErrors({...errors,time: "",});}}
+            className={inputCls(errors.time)}
+          />
+          {errors.time && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.time}
+            </p>
+          )}
         </div>
       </motion.div>
 
@@ -460,7 +501,8 @@ function Step2({ form, setForm }) {
 }
 
 
-function Step3({ form, setForm, previewImg, setPreviewImg }) {
+function Step3({ form, setForm, previewImg, setPreviewImg, errors, setErrors }) {
+  
   const fileRef = useRef();
 
   const handleFile = (e) => {
@@ -516,11 +558,11 @@ function Step3({ form, setForm, previewImg, setPreviewImg }) {
       {/* Contact preference */}
       <motion.div variants={fadeUp}>
         <label className={labelCls}>Contact Preference</label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {[
-            { value:"in-app", label:"In-App", icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg> },
-            { value:"email",  label:"Email",  icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> },
-            { value:"phone",  label:"Phone",  icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg> },
+            
+            { value:"email",  label:"Email",  icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 28 28"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> },
+            { value:"phone",  label:"Phone",  icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 28 28"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg> },
           ].map((opt) => {
             const active = form.contactPreference === opt.value;
             return (
@@ -550,14 +592,24 @@ function Step3({ form, setForm, previewImg, setPreviewImg }) {
           <p className="text-[13.5px] font-semibold" style={{ color:"#1A1A1A" }}>Reward Offered</p>
           <p className="text-[12px] mt-0.5" style={{ color:"#667085" }}>Let finders know you're offering a reward</p>
         </div>
-        <motion.button type="button"
-          onClick={() => setForm({ ...form, rewardOffered:!form.rewardOffered })}
-          whileTap={{ scale:0.93 }}
-          className="relative w-12 h-6 rounded-full transition-colors duration-200 outline-none flex-shrink-0"
-          style={{ background: form.rewardOffered ? "#5BE63A" : "#E5E7EB" }}>
-          <motion.span animate={{ x: form.rewardOffered ? 24 : 2 }}
-            transition={{ type:"spring", stiffness:500, damping:30 }}
-            className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"/>
+        <motion.button
+            type="button"
+            onClick={() =>
+            setForm({...form,rewardOffered: !form.rewardOffered,
+            })}
+            whileTap={{ scale: 0.95 }}
+            className="relative w-12 h-6 rounded-full transition-colors duration-200 flex-shrink-0"
+            style={{
+             background: form.rewardOffered ? "#5BE63A" : "#E5E7EB",}}>
+           <motion.span
+             animate={{
+             left: form.rewardOffered ? "26px" : "2px",
+            }}
+             transition={{
+               type: "spring",
+               stiffness: 500,
+               damping: 30,}}
+             className="absolute top-1 w-4 h-4 bg-white rounded-full shadow"/>
         </motion.button>
       </motion.div>
 
@@ -594,6 +646,7 @@ export default function ReportItem() {
   const [form, setForm] = useState(initialForm);
   const [previewImg, setPreviewImg] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -652,10 +705,55 @@ export default function ReportItem() {
     }
   };
 
+  const validateStep = () => {
+  const newErrors = {};
+
+  if (step === 1) {
+    if (!form.type)
+      newErrors.type = "Please select Lost or Found.";
+
+    if (!form.name.trim())
+      newErrors.name = "Item name is required.";
+
+    if (!form.category)
+      newErrors.category = "Please select a category.";
+
+    if (!form.description.trim())
+      newErrors.description = "Description is required.";
+  }
+
+  if (step === 2) {
+    if (!form.locationName.trim())
+      newErrors.locationName = "Location is required.";
+
+    if (!form.date)
+      newErrors.date = "Please select a date.";
+
+    if (!form.time)
+      newErrors.time = "Please select a time.";
+
+    
+  }
+
+  if (step === 3) {
+    if (!form.agreed)
+      newErrors.agreed = "Please accept the community guidelines.";
+  }
+
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
+};
+
   const handleNext = () => {
-    if (step < STEPS.length) setStep(step + 1);
-    else handleSubmitReport();
-  };
+  if (!validateStep()) return;
+
+  if (step < STEPS.length) {
+    setStep(step + 1);
+  } else {
+    handleSubmitReport();
+  }
+};
   const handleBack = () => { if (step > 1) setStep(step - 1); };
 
   /* ── SUCCESS SCREEN ───────────────────────────── */
@@ -762,9 +860,9 @@ export default function ReportItem() {
                 <motion.div key={step}
                   initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }}
                   exit={{ opacity:0, x:-20 }} transition={{ duration:0.25, ease:"easeOut" }}>
-                  {step===1 && <Step1 form={form} setForm={setForm}/>}
-                  {step===2 && <Step2 form={form} setForm={setForm}/>}
-                  {step===3 && <Step3 form={form} setForm={setForm} previewImg={previewImg} setPreviewImg={setPreviewImg}/>}
+                  {step===1 && <Step1 form={form} setForm={setForm} errors={errors} setErrors={setErrors}/>}
+                  {step===2 && <Step2 form={form} setForm={setForm} errors={errors} setErrors={setErrors}/>}
+                  {step===3 && <Step3 form={form} setForm={setForm} previewImg={previewImg} setPreviewImg={setPreviewImg} errors={errors} setErrors={setErrors}/>}
                 </motion.div>
               </AnimatePresence>
             </div>
