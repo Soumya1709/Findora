@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import AuthLayout from "../components/AuthLayout";
 import { login, googleLogin } from "../services/authService";
 import { useGoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 
 
 
@@ -48,10 +49,10 @@ export default function Login() {
       const response = await login(formData);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      alert("Login Successful");
+      toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
+      toast.error(error.response?.data?.message || "Login failed");
     }
   };
 

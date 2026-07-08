@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getItemById, getSimilarItems } from "../services/itemService";
 import { createClaim, checkCanViewOwner } from "../services/claimService";
 import NotificationBell from "../components/NotificationBell";
+import { toast } from "react-toastify";
 
 
 
@@ -306,10 +307,10 @@ export default function ItemsDetails() {
     try {
       const res = await createClaim(item._id);
       console.log(res.data);
-      alert("Claim request submitted successfully");
+      toast.success("Claim request submitted successfully");
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to create claim");
+      toast.error(error.response?.data?.message || "Failed to create claim");
     }
   };
   const shareUrl = window.location.href;
@@ -317,9 +318,10 @@ export default function ItemsDetails() {
   const copyLink = async () => {
   try {
     await navigator.clipboard.writeText(shareUrl);
-    alert("Link copied successfully!");
+    toast.success("Link copied successfully!");
   } catch (err) {
     console.error(err);
+    toast.error("Failed to copy link");
   }
 };
 

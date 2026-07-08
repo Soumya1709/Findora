@@ -4,7 +4,7 @@ import { updateProfile } from "../services/userService";
 import { useNavigate } from "react-router-dom";
 import { deleteAccount } from "../services/authService";
 import NotificationBell from "../components/NotificationBell";
-
+import { toast } from "react-toastify";
 
 
 const inputCls = `w-full px-4 py-3 text-[13.5px] rounded-xl border bg-[#F8FAF8]
@@ -198,11 +198,11 @@ export default function Settings() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    alert("Account deleted successfully.");
+    toast.success("Account deleted successfully.");
 
     navigate("/");
   } catch (error) {
-    alert(
+    toast.error(
       error.response?.data?.message ||
       "Failed to delete account."
     );

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthLayout from "../components/AuthLayout";
 import { signup } from "../services/authService";
-
+import { toast } from "react-toastify";
 
 
 const inputCls = `w-full py-3 text-[13.5px] rounded-xl border bg-[#F8FAF8]
@@ -75,7 +75,7 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
     try {
@@ -85,12 +85,12 @@ export default function Signup() {
         password: formData.password,
       };
       const response = await signup(payload);
-      alert("Account created successfully!");
+      toast.success("Account created successfully!");
       console.log(response.data);
       navigate("/login");
     } catch (error) {
       console.error("Signup failed:", error);
-      alert(error?.response?.data?.message || "Signup failed");
+      toast.error(error?.response?.data?.message || "Signup failed");
     }
   };
 

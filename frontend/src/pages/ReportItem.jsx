@@ -3,6 +3,7 @@ import { createItem, updateItem } from "../services/itemService";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import NotificationBell from "../components/NotificationBell";
+import { toast } from "react-toastify";
 
 
 
@@ -791,16 +792,16 @@ export default function ReportItem() {
       let response;
       if (isEdit) {
         response = await updateItem(editingItem.id, payload);
-        alert("Item updated successfully");
+        toast.success("Item updated successfully");
       } else {
         response = await createItem(payload);
-        alert("Item created successfully");
+        toast.success("Item created successfully");
       }
       console.log(response.data);
       setSubmitted(true);
     } catch (error) {
       console.error(error.response || error);
-      alert(error.response?.data?.message || "Failed to submit report");
+      toast.error(error.response?.data?.message || "Failed to submit report");
     }
   };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateClaimStatus, getClaimById } from "../services/claimService";
+import { toast } from "react-toastify";
 
 
 const claimAnswers = [
@@ -174,10 +175,10 @@ export default function ClaimPage() {
     try {
       await updateClaimStatus(claimId, status);
       setDecision(status);
-      alert(`Claim ${status} successfully`);
+      toast.success(`Claim ${status} successfully`);
     } catch (error) {
       console.error(error);
-      alert("Failed to update claim");
+      toast.error("Failed to update claim");
     }
   };
 

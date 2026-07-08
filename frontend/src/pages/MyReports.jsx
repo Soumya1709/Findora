@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMyItems, deleteItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 
 
 
@@ -418,10 +420,10 @@ export default function MyReports() {
     try {
       await deleteItem(id);
       setReports((prev)=>prev.filter((item)=>item.id!==id));
-      alert("Item deleted successfully");
+      toast.success("Item deleted successfully");
     } catch (error) {
       console.error(error);
-      alert("Failed to delete item");
+      toast.error("Failed to delete item");
     }
   };
 
