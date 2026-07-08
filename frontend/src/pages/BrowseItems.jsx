@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllItems } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "../components/NotificationBell";
 
 
 
@@ -82,20 +83,46 @@ function Topbar() {
 
       {/* Right */}
       <div className="flex items-center gap-2">
-        {[
-          { icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>, dot:true, onClick:()=>{} },
-          { icon:<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>, onClick:()=>navigate("/settings") },
-        ].map((btn,i)=>(
-          <motion.button key={i} onClick={btn.onClick}
-            whileHover={{ scale:1.08 }} whileTap={{ scale:0.92 }}
-            className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150"
-            style={{ color:"#667085" }}
-            onMouseEnter={e=>{ e.currentTarget.style.background="#F0FDF4"; e.currentTarget.style.color="#1B3A2F"; }}
-            onMouseLeave={e=>{ e.currentTarget.style.background="transparent"; e.currentTarget.style.color="#667085"; }}>
-            {btn.icon}
-            {btn.dot && <span className="absolute top-2 right-2 w-2 h-2 rounded-full border-2 border-white" style={{ background:"#F59E0B" }}/>}
-          </motion.button>
-        ))}
+
+  <NotificationBell />
+
+  <motion.button
+    onClick={() => navigate("/settings")}
+    whileHover={{ scale: 1.08 }}
+    whileTap={{ scale: 0.92 }}
+    className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150"
+    style={{ color: "#667085" }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "#F0FDF4";
+      e.currentTarget.style.color = "#1B3A2F";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "transparent";
+      e.currentTarget.style.color = "#667085";
+    }}
+  >
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    </svg>
+  </motion.button>
+
         <motion.div whileHover={{ scale:1.06 }} whileTap={{ scale:0.94 }}
           className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold cursor-pointer"
           style={{ background:"#1B3A2F", color:"#5BE63A", border:"2px solid #E5E7EB", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }}>

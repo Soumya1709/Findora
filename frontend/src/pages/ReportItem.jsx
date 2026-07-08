@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { createItem, updateItem } from "../services/itemService";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import NotificationBell from "../components/NotificationBell";
 
 
 
@@ -107,20 +108,44 @@ function Topbar() {
 
       {/* Right */}
       <div className="flex items-center gap-2">
-        {[
-          { icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>, dot:true, onClick:()=>{} },
-          { icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>, onClick:()=>navigate("/settings") },
-        ].map((btn,i) => (
-          <motion.button key={i} onClick={btn.onClick}
-            whileHover={{ scale:1.08 }} whileTap={{ scale:0.92 }}
-            className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150"
-            style={{ color:"#667085" }}
-            onMouseEnter={e=>{ e.currentTarget.style.background="#F0FDF4"; e.currentTarget.style.color="#1B3A2F"; }}
-            onMouseLeave={e=>{ e.currentTarget.style.background="transparent"; e.currentTarget.style.color="#667085"; }}>
-            {btn.icon}
-            {btn.dot && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#F59E0B] border-2 border-white"/>}
-          </motion.button>
-        ))}
+        <NotificationBell />
+
+  <motion.button
+    onClick={() => navigate("/settings")}
+    whileHover={{ scale: 1.08 }}
+    whileTap={{ scale: 0.92 }}
+    className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150"
+    style={{ color: "#667085" }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "#F0FDF4";
+      e.currentTarget.style.color = "#1B3A2F";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "transparent";
+      e.currentTarget.style.color = "#667085";
+    }}
+  >
+    <svg
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    </svg>
+  </motion.button>
         <motion.div whileHover={{ scale:1.06 }} whileTap={{ scale:0.94 }}
           className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold cursor-pointer"
           style={{ background:"#1B3A2F", color:"#5BE63A", border:"2px solid #E5E7EB", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }}>
@@ -502,6 +527,23 @@ function Step2({ form, setForm, errors, setErrors }) {
 
 
 function Step3({ form, setForm, previewImg, setPreviewImg, errors, setErrors }) {
+  const [user, setUser] = useState(null);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleContactPreference = (type) => {
+
+  if (type === "phone" && !user?.phone) {
+    setShowPhoneModal(true);
+    return;
+  }
+
+  setForm({
+    ...form,
+    contactPreference: type,
+  });
+
+};
   
   const fileRef = useRef();
 
@@ -567,7 +609,7 @@ function Step3({ form, setForm, previewImg, setPreviewImg, errors, setErrors }) 
             const active = form.contactPreference === opt.value;
             return (
               <motion.button key={opt.value} type="button"
-                onClick={() => setForm({ ...form, contactPreference:opt.value })}
+                onClick={() => handleContactPreference(opt.value)}
                 whileHover={{ y:-1 }} whileTap={{ scale:0.97 }}
                 className="flex flex-col items-center gap-2 p-3.5 rounded-xl border-[1.5px] text-[12px] font-semibold transition-all duration-150"
                 style={{
@@ -612,6 +654,63 @@ function Step3({ form, setForm, previewImg, setPreviewImg, errors, setErrors }) 
              className="absolute top-1 w-4 h-4 bg-white rounded-full shadow"/>
         </motion.button>
       </motion.div>
+
+      <AnimatePresence>
+  {showPhoneModal && (
+    <>
+      <motion.div
+        className="fixed inset-0 bg-black/20 backdrop-blur-md z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setShowPhoneModal(false)}
+      />
+
+      <motion.div
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                   bg-white rounded-3xl p-6 w-[92%] max-w-md z-50 shadow-2xl"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      >
+        <div className="text-center">
+
+          <div className="w-14 h-14 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-4">
+            📱
+          </div>
+
+          <h2 className="text-xl font-bold text-[#1B3A2F]">
+            Phone Number Required
+          </h2>
+
+          <p className="text-gray-500 mt-3">
+            To receive updates via phone, please add your phone number in
+            <span className="font-semibold"> Settings</span> first.
+          </p>
+
+          <div className="flex gap-3 mt-6">
+
+            <button
+              onClick={() => setShowPhoneModal(false)}
+              className="flex-1 border rounded-xl py-3"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={() => navigate("/settings")}
+              className="flex-1 bg-[#5BE63A] rounded-xl py-3 font-semibold text-[#1B3A2F]"
+            >
+              Go to Settings
+            </button>
+
+          </div>
+
+        </div>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
 
       {/* Terms */}
       <motion.div variants={fadeUp}>

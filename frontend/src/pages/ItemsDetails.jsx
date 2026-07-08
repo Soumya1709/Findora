@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { getItemById, getSimilarItems } from "../services/itemService";
 import { createClaim, checkCanViewOwner } from "../services/claimService";
+import NotificationBell from "../components/NotificationBell";
+
 
 
 
@@ -108,19 +110,44 @@ function Navbar({ initials }) {
 
       {/* Right icons */}
       <div className="flex items-center gap-2">
-        {[
-          { icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg> },
-          { icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, onClick: () => navigate("/settings") },
-        ].map((btn, i) => (
-          <motion.button key={i} onClick={btn.onClick}
-            whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
-            className="w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150"
-            style={{ color: "#667085" }}
-            onMouseEnter={e => { e.currentTarget.style.background = "#F0FDF4"; e.currentTarget.style.color = "#1B3A2F"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#667085"; }}>
-            {btn.icon}
-          </motion.button>
-        ))}
+              <NotificationBell />
+      
+        <motion.button
+          onClick={() => navigate("/settings")}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
+          className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-150"
+          style={{ color: "#667085" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#F0FDF4";
+            e.currentTarget.style.color = "#1B3A2F";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#667085";
+          }}
+        >
+          <svg
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.8}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.8}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </motion.button>
         <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
           className="w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold cursor-pointer"
           style={{ background: "#1B3A2F", color: "#5BE63A", border: "2px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
@@ -207,6 +234,7 @@ export default function ItemsDetails() {
   const [showOwnerModal, setShowOwnerModal] = useState(false);
   const [canViewOwner,   setCanViewOwner]   = useState(false);
   const navigate = useNavigate();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => { fetchItem(); }, [id]);
 
@@ -284,6 +312,42 @@ export default function ItemsDetails() {
       alert(error.response?.data?.message || "Failed to create claim");
     }
   };
+  const shareUrl = window.location.href;
+
+  const copyLink = async () => {
+  try {
+    await navigator.clipboard.writeText(shareUrl);
+    alert("Link copied successfully!");
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const shareWhatsapp = () => {
+  window.open(
+    `https://wa.me/?text=${encodeURIComponent(shareUrl)}`,
+    "_blank"
+  );
+};
+
+const shareTelegram = () => {
+  window.open(
+    `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}`,
+    "_blank"
+  );
+};
+
+const shareFacebook = () => {
+  window.open(
+    `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+    "_blank"
+  );
+};
+
+const shareEmail = () => {
+  window.location.href =
+    `mailto:?subject=Check out this item on Findora&body=${encodeURIComponent(shareUrl)}`;
+};
 
   const reporterInitials = item.reportedBy?.fullName?.split(" ").map((n) => n[0]).join("").toUpperCase();
 
@@ -422,7 +486,7 @@ export default function ItemsDetails() {
             )}
 
             {/* Share button */}
-            <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
+            <motion.button onClick={() => setShowShareModal(true)} whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
               className="w-full mt-2.5 py-2.5 rounded-xl text-[13px] font-medium flex items-center justify-center gap-2 transition-all duration-150"
               style={{ border: "1.5px solid #E5E7EB", color: "#667085", background: "#fff" }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = "#5BE63A"; e.currentTarget.style.color = "#1B3A2F"; }}
@@ -546,6 +610,100 @@ export default function ItemsDetails() {
           <OwnerModal item={item} onClose={() => setShowOwnerModal(false)} />
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+  {showShareModal && (
+    <>
+      <motion.div
+  className="fixed inset-0 z-50 backdrop-blur-lg bg-white/10"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  onClick={() => setShowShareModal(false)}
+/>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 30 }}
+        transition={{ duration: 0.25 }}
+        className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white shadow-2xl overflow-hidden"
+      >
+
+        {/* Header */}
+
+        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+
+          <div>
+
+            <h2 className="text-xl font-bold text-[#1B3A2F]">
+              Share Item
+            </h2>
+
+            <p className="text-sm text-gray-500 mt-1">
+              Share this item with your friends.
+            </p>
+
+          </div>
+
+          <button
+            onClick={() => setShowShareModal(false)}
+            className="text-gray-400 hover:text-gray-700 text-xl"
+          >
+            ✕
+          </button>
+
+        </div>
+
+        {/* Body */}
+
+        <div className="p-6">
+
+          <button
+            onClick={copyLink}
+            className="w-full mb-3 py-3 rounded-xl bg-[#5BE63A] text-[#1B3A2F] font-semibold hover:opacity-90 transition"
+          >
+            🔗 Copy Link
+          </button>
+
+          <div className="grid grid-cols-2 gap-3">
+
+            <button
+              onClick={shareWhatsapp}
+              className="rounded-xl border border-gray-200 py-3 hover:bg-green-50 transition"
+            >
+              🟢 WhatsApp
+            </button>
+
+            <button
+              onClick={shareTelegram}
+              className="rounded-xl border border-gray-200 py-3 hover:bg-blue-50 transition"
+            >
+              ✈ Telegram
+            </button>
+
+            <button
+              onClick={shareFacebook}
+              className="rounded-xl border border-gray-200 py-3 hover:bg-blue-50 transition"
+            >
+              📘 Facebook
+            </button>
+
+            <button
+              onClick={shareEmail}
+              className="rounded-xl border border-gray-200 py-3 hover:bg-gray-100 transition"
+            >
+              ✉ Email
+            </button>
+
+          </div>
+
+        </div>
+
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
 
       {/* FOOTER */}
       <footer style={{ background: "#1B3A2F", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
