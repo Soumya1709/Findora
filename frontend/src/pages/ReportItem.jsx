@@ -532,6 +532,11 @@ function Step3({ form, setForm, previewImg, setPreviewImg, errors, setErrors }) 
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  setUser(storedUser);
+}, []);
+
   const handleContactPreference = (type) => {
 
   if (type === "phone" && !user?.phone) {
