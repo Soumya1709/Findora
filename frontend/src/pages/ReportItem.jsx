@@ -538,19 +538,23 @@ function Step3({ form, setForm, previewImg, setPreviewImg, errors, setErrors }) 
 }, []);
 
   const handleContactPreference = (type) => {
+  const latestUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (type === "phone" && !user?.phone) {
+  if (
+    type === "phone" &&
+    (!latestUser.phoneNumber || latestUser.phoneNumber.trim() === "")
+  ) {
     setShowPhoneModal(true);
     return;
   }
 
-  setForm({
-    ...form,
-    contactPreference: type,
-  });
+  setShowPhoneModal(false);
 
+  setForm((prev) => ({
+    ...prev,
+    contactPreference: type,
+  }));
 };
-  
   const fileRef = useRef();
 
   const handleFile = (e) => {

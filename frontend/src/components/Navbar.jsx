@@ -72,7 +72,8 @@ const initials = user?.fullName
 
           {/* Right */}
           <div className="hidden md:flex items-center gap-2">
-            <button className="px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150"
+            <button onClick={() => navigate("/support")}
+              className="px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150"
               style={{ color: "#667085" }}
               onMouseEnter={e => { e.currentTarget.style.background = "#F0FDF4"; e.currentTarget.style.color = "#1B3A2F"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#667085"; }}>

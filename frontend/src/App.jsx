@@ -7,7 +7,12 @@ import MyReports from "./pages/MyReports";
 import BrowseItems from "./pages/BrowseItems";
 import ItemsDetails from "./pages/ItemsDetails";
 import ClaimPage from "./pages/Claim";
-import Settings from "./pages/Settings"
+import Settings from "./pages/Settings";
+import About from "./pages/About";
+import Support from "./pages/Support";
+import Faq from "./pages/Faq";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 import Home from "./pages/Home";
 
@@ -25,6 +30,11 @@ function App() {
         <Route path="/item/:id" element={<ItemsDetails />}/>
         <Route path="/claims/:id" element={<ClaimPage />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/faq" element={<Faq />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
       </Routes>
     </BrowserRouter>
   );
