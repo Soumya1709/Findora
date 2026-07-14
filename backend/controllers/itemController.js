@@ -1,8 +1,9 @@
 import Item from "../models/Item.js";
 import cloudinary from "../config/cloudinary.js";
 import streamifier from "streamifier";
+import { findBestMatches } from "../services/aiMatcher.js";
 
-// Create Item
+
 
 export const createItem = async (req, res) => {
   try {
@@ -62,6 +63,11 @@ const item = await Item.create({
   reportedBy: req.user.userId,
 });
     
+const matches = await findBestMatches(item);
+
+item.matchedItems = matches;
+
+await item.save();
 
     res.status(201).json({
       success: true,
@@ -77,7 +83,7 @@ const item = await Item.create({
 };
 
 
-// Get All Items
+
 export const getAllItems = async (req, res) => {
   try {
     const items = await Item.find()
@@ -97,7 +103,7 @@ export const getAllItems = async (req, res) => {
   }
 };
 
-// Get Single Item
+
 export const getItemById = async (req, res) => {
   try {
     const item = await Item.findById(req.params.id)
@@ -161,7 +167,7 @@ export const getSimilarItems = async (
   }
 };
 
-// Get Logged In User's Items
+
 export const getMyItems = async (req, res) => {
   try {
     const items = await Item.find({
@@ -183,7 +189,7 @@ export const getMyItems = async (req, res) => {
   }
 };
 
-// Delete Item
+
 export const deleteItem = async (req, res) => {
   try {
      console.log("Delete ID:", req.params.id);

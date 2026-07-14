@@ -107,11 +107,15 @@ const itemSchema = new mongoose.Schema(
       default: [],
     },
 
-    matchedItem: {
+    matchedItems: [
+  {
+    item: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Item",
-      default: null,
     },
+    score: Number,
+  },
+],
 
     // ── Flags ─────────────────────────────────────
     isActive: {
