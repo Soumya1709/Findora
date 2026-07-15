@@ -4,7 +4,6 @@ import streamifier from "streamifier";
 import { findBestMatches } from "../services/aiMatcher.js";
 
 
-
 export const createItem = async (req, res) => {
   try {
     const {
@@ -17,57 +16,52 @@ export const createItem = async (req, res) => {
       location,
       dateLostOrFound,
     } = req.body;
-    const parsedLocation = location
-  ? JSON.parse(location)
-  : {};
-  
 
-  let imageUrl = "";
+    const parsedLocation = location ? JSON.parse(location) : {};
 
-if (req.file) {
-  ;
-  const result = await new Promise((resolve, reject) => {
-    
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "findora",
-      },
-      (error, result) => {
-        
+    let imageUrl = "";
 
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "findora",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
 
-    streamifier
-      .createReadStream(req.file.buffer)
-      .pipe(stream);
-  });
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
 
-  imageUrl = result.secure_url;
-}
+      imageUrl = result.secure_url;
+    }
 
-const item = await Item.create({
-  title,
-  description,
-  type,
-  category,
-  primaryColor,
-  brand,
-  location:parsedLocation,
-  dateLostOrFound,
+    const item = await Item.create({
+      title,
+      description,
+      type,
+      status: "active",
+      category,
+      primaryColor,
+      brand,
+      location: parsedLocation,
+      dateLostOrFound,
+      images: imageUrl ? [imageUrl] : [],
+      reportedBy: req.user.userId,
+    });
 
-  images: imageUrl ? [imageUrl] : [],
+    const matches = await findBestMatches(item);
 
-  reportedBy: req.user.userId,
-});
-    
-const matches = await findBestMatches(item);
+    item.matchedItems = matches;
 
-item.matchedItems = matches;
+    if (matches.length > 0) {
+      item.matchScore = matches[0].score;
+    }
 
-await item.save();
+    await item.save();
 
     res.status(201).json({
       success: true,
@@ -75,14 +69,14 @@ await item.save();
       item,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
-
 
 export const getAllItems = async (req, res) => {
   try {
@@ -102,7 +96,6 @@ export const getAllItems = async (req, res) => {
     });
   }
 };
-
 
 export const getItemById = async (req, res) => {
   try {
@@ -192,9 +185,9 @@ export const getMyItems = async (req, res) => {
 
 export const deleteItem = async (req, res) => {
   try {
-     console.log("Delete ID:", req.params.id);
+     
     const item = await Item.findById(req.params.id);
-    console.log("Found Item:", item);
+    
 
     if (!item) {
       return res.status(404).json({
