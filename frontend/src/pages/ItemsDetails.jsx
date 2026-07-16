@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getItemById, getSimilarItems } from "../services/itemService";
+import { getItemById, getSimilarItems,getAIMatches} from "../services/itemService";
 import { createClaim, checkCanViewOwner } from "../services/claimService";
 import NotificationBell from "../components/NotificationBell";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 
@@ -18,47 +19,6 @@ const LaptopSVG = ({ className = "" }) => (
     <rect x="80" y="270" width="400" height="18" rx="6" fill="#b5b9c2" />
     <rect x="210" y="274" width="140" height="10" rx="4" fill="#9ca0aa" />
     <circle cx="280" cy="170" r="8" fill="#3a3f4a" />
-  </svg>
-);
-
-const KeyboardSVG = () => (
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <rect width="100" height="100" fill="#dde1e8" />
-    <rect x="10" y="20" width="80" height="50" rx="4" fill="#b0b5bf" />
-    <rect x="14" y="24" width="72" height="42" rx="2" fill="#2a2d35" />
-    <rect x="5" y="70" width="90" height="7" rx="3" fill="#a8acb6" />
-  </svg>
-);
-
-const AppleSVG = () => (
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <rect width="100" height="100" fill="#e2e6ec" />
-    <circle cx="50" cy="46" r="22" fill="#c5c9d0" />
-    <circle cx="50" cy="46" r="16" fill="#9ea3ad" />
-    <circle cx="50" cy="46" r="6" fill="#d1d5de" />
-  </svg>
-);
-
-const MapSVG = () => (
-  <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <rect width="600" height="160" fill="#EEF3E8" />
-    {[40, 80, 120].map((y) => <line key={y} x1="0" y1={y} x2="600" y2={y} stroke="#C9DFC0" strokeWidth="1" />)}
-    {[100, 200, 300, 400, 500].map((x) => <line key={x} x1={x} y1="0" x2={x} y2="160" stroke="#C9DFC0" strokeWidth="1" />)}
-    <rect x="30"  y="20" width="55" height="40" rx="3" fill="#C9DFC0" />
-    <rect x="120" y="10" width="60" height="55" rx="3" fill="#c5dab8" />
-    <rect x="220" y="30" width="45" height="35" rx="3" fill="#C9DFC0" />
-    <rect x="330" y="15" width="70" height="50" rx="3" fill="#bcd8b0" />
-    <rect x="440" y="25" width="50" height="40" rx="3" fill="#C9DFC0" />
-    <rect x="50"  y="90" width="65" height="45" rx="3" fill="#C9DFC0" />
-    <rect x="160" y="85" width="80" height="55" rx="3" fill="#c5dab8" />
-    <rect x="290" y="90" width="55" height="50" rx="3" fill="#C9DFC0" />
-    <rect x="390" y="80" width="75" height="60" rx="3" fill="#bcd8b0" />
-    <rect x="500" y="88" width="60" height="52" rx="3" fill="#C9DFC0" />
-    <rect x="0"   y="68" width="600" height="14" fill="#D4F7C5" opacity="0.6" />
-    <rect x="270" y="0"  width="20"  height="160" fill="#D4F7C5" opacity="0.6" />
-    <circle cx="300" cy="75" r="14" fill="#5BE63A" opacity="0.18" />
-    <circle cx="300" cy="75" r="8"  fill="#1B3A2F" />
-    <circle cx="300" cy="75" r="3"  fill="white" />
   </svg>
 );
 
@@ -234,6 +194,8 @@ export default function ItemsDetails() {
   const [similarItems,   setSimilarItems]   = useState([]);
   const [showOwnerModal, setShowOwnerModal] = useState(false);
   const [canViewOwner,   setCanViewOwner]   = useState(false);
+  const [aiMatches, setAiMatches] = useState([]);
+  const [loadingMatches, setLoadingMatches] = useState(true);
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
 
@@ -248,6 +210,22 @@ export default function ItemsDetails() {
     };
     fetchPermission();
   }, [id]);
+
+  useEffect(() => {
+  async function fetchMatches() {
+    try {
+      const res = await getAIMatches(id);
+
+      setAiMatches(res.matches || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMatches(false);
+    }
+  }
+
+  fetchMatches();
+}, [id]);
 
   const fetchItem = async () => {
     try {
@@ -398,39 +376,303 @@ const shareEmail = () => {
               </span>
             </div>
 
-            {/* Thumbnails */}
-            <div className="flex gap-3 mt-3">
-              {[<KeyboardSVG />, <AppleSVG />, null].map((Thumb, i) => (
-                <motion.div key={i} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  onClick={() => setActiveThumb(i)}
-                  className="flex-1 aspect-square rounded-xl overflow-hidden cursor-pointer relative transition-all duration-150"
-                  style={{
-                    background: "#EEF3E8",
-                    border: `2px solid ${activeThumb === i ? "#5BE63A" : "#E5E7EB"}`,
-                    boxShadow: activeThumb === i ? "0 0 0 3px rgba(91,230,58,0.15)" : "none",
-                  }}>
-                  {i < 2 ? Thumb : (
-                    <>
-                      <div className="w-full h-full" style={{ background: "#E5E7EB" }} />
-                      <div className="absolute inset-0 flex items-center justify-center text-[13px] font-semibold rounded-lg"
-                        style={{ background: "rgba(27,58,47,0.5)", color: "#5BE63A" }}>
-                        +2 More
-                      </div>
-                    </>
-                  )}
-                </motion.div>
-              ))}
-            </div>
+            <motion.div
+  initial={{ opacity: 0, y: 25 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4 }}
+  className="mt-6 rounded-3xl overflow-hidden"
+  style={{
+    border: "1px solid #DDEFD6",
+    background: "#fff",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.05)",
+  }}
+>
+  {/* Header */}
 
-            {/* Map */}
-            <div className="mt-4 rounded-2xl overflow-hidden relative" style={{ height: 160, border: "1px solid #C9DFC0" }}>
-              <MapSVG />
-              <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[12px] font-medium"
-                style={{ background: "rgba(255,255,255,0.92)", border: "1px solid #E5E7EB", color: "#1A1A1A" }}>
-                <div className="w-2 h-2 rounded-full" style={{ background: "#5BE63A" }} />
-                {item?.location?.name}
-              </div>
-            </div>
+  <div
+  className="px-6 py-5 flex items-center justify-between"
+  style={{
+    background: "#F0FDF4",
+    borderBottom: "1px solid #E5F4E0",
+  }}
+>
+  <div className="flex items-center gap-4">
+
+    <div
+      className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+      style={{
+        background: "#5BE63A",
+      }}
+    >
+      🤖
+    </div>
+
+    <div>
+
+      <h3
+        className="font-bold text-lg"
+        style={{ color: "#1B3A2F" }}
+      >
+        AI Match Assistant
+      </h3>
+
+      <p
+        className="text-sm"
+        style={{ color: "#667085" }}
+      >
+        Powered by Semantic AI Matching
+      </p>
+
+    </div>
+
+  </div>
+
+  <div
+    className="px-3 py-1 rounded-full text-xs font-semibold"
+    style={{
+      background: "#DCFCE7",
+      color: "#15803D",
+    }}
+  >
+    AI Powered
+  </div>
+</div>
+
+  {/* Body */}
+
+  <div className="p-5">
+
+    {loadingMatches ? (
+
+      <div
+        className="text-center py-10"
+        style={{ color: "#98A2B3" }}
+      >
+        Searching with AI...
+      </div>
+
+    ) : aiMatches.length === 0 ? (
+
+      <div className="text-center py-12">
+
+    <div
+        className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl"
+        style={{
+            background: "#F0FDF4",
+        }}
+    >
+        🤖
+    </div>
+
+    <h3
+        className="mt-5 font-bold text-xl"
+        style={{
+            color:"#1B3A2F"
+        }}
+    >
+        No Matches Found Yet
+    </h3>
+
+    <p
+        className="mt-3 max-w-md mx-auto"
+        style={{
+            color:"#667085"
+        }}
+    >
+        Our AI continuously monitors every newly reported item.
+        You'll automatically receive a notification whenever
+        a strong match is detected.
+    </p>
+
+    <div
+        className="inline-flex items-center gap-2 mt-6 px-5 py-3 rounded-full"
+        style={{
+            background:"#DCFCE7",
+            color:"#15803D",
+            fontWeight:600
+        }}
+    >
+        🟢 AI Monitoring Active
+    </div>
+
+</div>
+
+    ) : (
+
+      <div className="space-y-5">
+
+        {aiMatches.map((match, index) => {
+
+          const score = match.score;
+
+          const badgeColor =
+            score >= 90
+              ? "#16A34A"
+              : "#EAB308";
+
+          const badgeText =
+            score >= 90
+              ? "Excellent Match"
+              : "Good Match";
+
+          return (
+
+            <motion.div
+        key={match.item._id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.35,
+          delay: index * 0.1,
+        }}
+      >
+
+            <div
+  key={match.item._id}
+  className="rounded-2xl overflow-hidden"
+  style={{
+    border: "1px solid #E5E7EB",
+    background: "#fff",
+  }}
+>
+
+  <div className="flex">
+
+    {/* IMAGE */}
+
+    <div
+      className="w-32 h-32"
+      style={{
+        background: "#F9FAFB",
+      }}
+    >
+      <img
+        src={
+          match.item.images?.[0] ||
+          "https://via.placeholder.com/300"
+        }
+        alt=""
+        className="w-full h-full object-cover"
+      />
+    </div>
+
+    {/* CONTENT */}
+
+    <div className="flex-1 p-5">
+
+      <div className="flex justify-between items-start">
+
+        <div>
+
+          <h4
+            className="font-bold text-lg"
+            style={{
+              color: "#1B3A2F",
+            }}
+          >
+            {match.item.title}
+          </h4>
+
+          <div
+            className="text-sm mt-1"
+            style={{
+              color: "#98A2B3",
+            }}
+          >
+            {match.item.category}
+          </div>
+
+        </div>
+
+        <span
+          className="px-3 py-1 rounded-full text-sm font-bold"
+          style={{
+            background:
+              score >= 90
+                ? "#DCFCE7"
+                : "#FEF3C7",
+
+            color:
+              score >= 90
+                ? "#15803D"
+                : "#B45309",
+          }}
+        >
+          {score.toFixed(0)}%
+        </span>
+
+      </div>
+
+      {/* Progress */}
+
+      <div
+        className="mt-4 h-2 rounded-full overflow-hidden"
+        style={{
+          background: "#EEF2F7",
+        }}
+      >
+
+        <div
+          style={{
+            width: `${score}%`,
+            background:
+              score >= 90
+                ? "#22C55E"
+                : "#FACC15",
+            height: "100%",
+          }}
+        />
+
+      </div>
+
+      <div
+        className="mt-4 flex justify-between items-center"
+      >
+
+        <div
+          className="text-sm"
+          style={{
+            color: "#667085",
+          }}
+        >
+          📍 {match.item.location?.name}
+        </div>
+
+        <Link
+          to={`/items/${match.item._id}`}
+          className="px-4 py-2 rounded-xl text-sm font-semibold transition"
+          style={{
+            background: "#5BE63A",
+            color: "#1B3A2F",
+          }}
+        >
+          View Item →
+        </Link>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+ </motion.div>
+
+          );
+
+        })}
+
+      </div>
+
+    )}
+
+  </div>
+
+</motion.div>
+
+            
+
+            
           </motion.div>
 
           {/* ── RIGHT COLUMN ────────────────────────── */}

@@ -50,3 +50,8 @@ export const getSimilarItems = (id) =>
 
 export const getItemById = (id) =>
   API.get(`/${id}`);
+
+export const getAIMatches = async (itemId) => {
+  const res = await API.get(`/${itemId}/matches`);
+  return res.data;
+};

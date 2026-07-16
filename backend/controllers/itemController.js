@@ -160,6 +160,34 @@ export const getSimilarItems = async (
   }
 };
 
+export const getAIMatches = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id)
+      .populate({
+        path: "matchedItems.item",
+        select:
+          "title description category brand primaryColor images location type status",
+      });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      matches: item.matchedItems,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 
 export const getMyItems = async (req, res) => {
   try {

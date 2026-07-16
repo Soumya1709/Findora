@@ -9,7 +9,7 @@ import {
   getMyItems,
   deleteItem,
   updateItem,
-  getSimilarItems
+  getSimilarItems, getAIMatches,
 } from "../controllers/itemController.js";
 
 const router = express.Router();
@@ -26,6 +26,7 @@ router.get("/", getAllItems);
 router.get("/my-items", authMiddleware, getMyItems);
 
 router.get("/similar/:id", getSimilarItems);
+router.get("/:id/matches", getAIMatches);
 router.get("/:id", getItemById);
 
 router.delete("/:id", authMiddleware, deleteItem);

@@ -1,5 +1,6 @@
 import Item from "../models/Item.js";
 import { compareItems } from "./aiService.js";
+import { createNotification } from "./notificationService.js";
 
 export async function findBestMatches(newItem) {
   console.log("========== AI MATCHING ==========");
@@ -43,12 +44,34 @@ export async function findBestMatches(newItem) {
 
       console.log("Similarity:", score);
 
-      if (score >= 50) {
+      if (score >= 20) {
         matches.push({
           item: item._id,
           score,
         });
-      }
+         await createNotification({
+    user: newItem.reportedBy,
+    title: "🤖 AI Match Found",
+    message: `We found a ${score.toFixed(0)}% match for your reported item.`,
+    type: "ai_match",
+    item: newItem._id,
+    matchedItem: item._id,
+    matchScore: score,
+  });
+
+  
+  await createNotification({
+    user: item.reportedBy,
+    title: "🤖 AI Match Found",
+    message: `A newly reported item matches yours with ${score.toFixed(0)}% confidence.`,
+    type: "ai_match",
+    item: item._id,
+    matchedItem: newItem._id,
+    matchScore: score,
+  });
+
+
+  }
     } catch (err) {
       console.error("AI Error:", err.response?.data || err.message);
     }
