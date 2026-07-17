@@ -639,7 +639,7 @@ const shareEmail = () => {
         </div>
 
         <Link
-          to={`/items/${match.item._id}`}
+          to={`/item/${match.item._id}`}
           className="px-4 py-2 rounded-xl text-sm font-semibold transition"
           style={{
             background: "#5BE63A",
