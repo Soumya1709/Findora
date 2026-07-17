@@ -11,7 +11,8 @@ export async function createNotification({
   matchScore = null,
 }) {
   try {
-    await Notification.create({
+    console.log("========== CREATING NOTIFICATION ==========");
+    console.log({
       user,
       title,
       message,
@@ -21,7 +22,20 @@ export async function createNotification({
       matchedItem,
       matchScore,
     });
+
+    const notification = await Notification.create({
+      user,
+      title,
+      message,
+      type,
+      claimId,
+      item,
+      matchedItem,
+      matchScore,
+    });
+
+    console.log("✅ Notification Saved:", notification._id);
   } catch (error) {
-    console.error("Notification Error:", error.message);
+    console.error("❌ Notification Error:", error);
   }
 }

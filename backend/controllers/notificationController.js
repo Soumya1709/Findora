@@ -4,7 +4,16 @@ export const getMyNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({
       user: req.user.userId,
-    }).sort({ createdAt: -1 });
+    })
+      .populate(
+        "matchedItem",
+        "title images category primaryColor location type status"
+      )
+      .populate(
+        "item",
+        "title images category primaryColor location type status"
+      )
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,

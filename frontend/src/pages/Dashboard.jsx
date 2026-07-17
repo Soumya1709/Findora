@@ -378,11 +378,9 @@ function DashboardContent({ search }) {
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const navigate = useNavigate();
+  const [aiMatches, setAiMatches] = useState([]);
 
-  const matchAlerts = [
-    { id: 1, item: "Sony XM4 Headphones", confidence: 92, location: "Library", time: "2h ago" },
-    { id: 2, item: "Blue Calculus Textbook", confidence: 74, location: "Science Block", time: "1d ago" },
-  ];
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -398,6 +396,9 @@ function DashboardContent({ search }) {
       try {
         const res = await getMyItems();
         setReports(res.data.items);
+        const notificationRes = await getNotifications();
+        const matches = notificationRes.data.notifications.filter( (notification) => notification.type === "ai_match");
+        setAiMatches(matches);
       } catch (error) {
         console.error(error);
       }
@@ -663,11 +664,11 @@ function DashboardContent({ search }) {
                 </div>
                 <span className="text-[10px] font-bold rounded-full px-2.5 py-0.5"
                   style={{ background: "#5BE63A", color: "#1B3A2F" }}>
-                  {matchAlerts.length} new
+                  {aiMatches.length} new
                 </span>
               </div>
               <div style={{ background: "#1B3A2F" }}>
-                {matchAlerts.map((alert, i) => (
+                {aiMatches.map((alert, i) => (
                   <motion.div key={alert.id}
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.1 + 0.3 }}
                     className="px-5 py-4 transition-colors duration-150"
@@ -676,22 +677,33 @@ function DashboardContent({ search }) {
                     onMouseLeave={e => e.currentTarget.style.background = ""}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-[12.5px] font-semibold text-white truncate">{alert.item}</p>
+                        <p className="text-[12.5px] font-semibold text-white truncate">{alert.matchedItem?.title}</p>
                         <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>
-                          {alert.location} · {alert.time}
+                          {alert.matchedItem?.location?.name} · {new Date(alert.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <ConfidenceRing value={alert.confidence}/>
+                      <ConfidenceRing value={Math.round(alert.matchScore)}/>
                     </div>
                     <div className="flex gap-2 mt-3.5">
-                      <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.96 }}
+                      <motion.button
+                        whileHover={{ y: -1 }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => navigate(`/item/${alert.matchedItem._id}`)}
                         className="flex-1 text-[11.5px] font-semibold py-2 rounded-xl"
-                        style={{ background: "#5BE63A", color: "#1B3A2F" }}>
-                        Claim
+                        style={{background: "#5BE63A",color: "#1B3A2F",}}>
+                        View Match
                       </motion.button>
-                      <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.96 }}
-                        className="flex-1 text-[11.5px] font-semibold py-2 rounded-xl"
-                        style={{ border: "1px solid rgba(255,255,255,0.14)", color: "rgba(255,255,255,0.55)" }}>
+                      <motion.button
+                        whileHover={{ y: -1 }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={async () => {
+                        try {
+                          await markNotificationRead(alert._id);
+                          setAiMatches((prev) => prev.filter((n) => n._id !== alert._id));
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }}className="flex-1 text-[11.5px] font-semibold py-2 rounded-xl"style={{border: "1px solid rgba(255,255,255,0.14)",color: "rgba(255,255,255,0.55)",}}>
                         Dismiss
                       </motion.button>
                     </div>

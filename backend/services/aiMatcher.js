@@ -44,7 +44,7 @@ export async function findBestMatches(newItem) {
 
       console.log("Similarity:", score);
 
-      if (score >= 20) {
+      if (score >= 70) {
         matches.push({
           item: item._id,
           score,
