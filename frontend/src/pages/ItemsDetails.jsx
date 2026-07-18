@@ -501,19 +501,51 @@ const shareEmail = () => {
 
       <div className="space-y-5">
 
-        {aiMatches.map((match, index) => {
+        {aiMatches.filter((match) => match.score >= 70)
+        .sort((a, b) => b.score - a.score)
+        .map((match, index) => {
 
           const score = match.score;
+          let badgeColor;
+          let badgeText;
 
-          const badgeColor =
-            score >= 90
-              ? "#16A34A"
-              : "#EAB308";
+         if (score >= 90) {
+           badgeColor = "#16A34A";
+           badgeText = "Excellent Match";
+         } else if (score >= 80) {
+           badgeColor = "#65A30D";
+           badgeText = "Strong Match";
+         } else if (score >= 70) {
+            badgeColor = "#EAB308";
+            badgeText = "Possible Match";
+      }
 
-          const badgeText =
-            score >= 90
-              ? "Excellent Match"
-              : "Good Match";
+          const reasons = [];
+
+if (item?.category === match.item?.category) {
+  reasons.push(`Same Category (${item.category})`);
+}
+
+if (item?.primaryColor === match.item?.primaryColor) {
+  reasons.push(`Same Color (${item.primaryColor})`);
+}
+
+if (
+  item?.brand &&
+  match.item?.brand &&
+  item.brand.toLowerCase() === match.item.brand.toLowerCase()
+) {
+  reasons.push(`Same Brand (${item.brand})`);
+}
+
+if (
+  item?.location?.name &&
+  match.item?.location?.name &&
+  item.location.name.toLowerCase() ===
+    match.item.location.name.toLowerCase()
+) {
+  reasons.push(`Same Location (${item.location.name})`);
+}
 
           return (
 
@@ -541,20 +573,42 @@ const shareEmail = () => {
     {/* IMAGE */}
 
     <div
-      className="w-32 h-32"
-      style={{
-        background: "#F9FAFB",
+  className="w-32 h-32"
+  style={{
+    background: "#F9FAFB",
+  }}
+>
+  {match.item.images?.length > 0 ? (
+    <img
+      src={match.item.images[0]}
+      alt={match.item.title}
+      className="w-full h-full object-cover"
+      onError={(e) => {
+        e.currentTarget.src = "/placeholder.png";
       }}
-    >
-      <img
-        src={
-          match.item.images?.[0] ||
-          "https://via.placeholder.com/300"
-        }
-        alt=""
-        className="w-full h-full object-cover"
-      />
+    />
+  ) : (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100">
+      <svg
+        className="w-10 h-10 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M4 16l4-4 4 4 8-8"
+        />
+      </svg>
+
+      <p className="text-xs text-gray-500 mt-2">
+        No Image
+      </p>
     </div>
+  )}
+</div>
 
     {/* CONTENT */}
 
@@ -584,22 +638,24 @@ const shareEmail = () => {
 
         </div>
 
-        <span
-          className="px-3 py-1 rounded-full text-sm font-bold"
-          style={{
-            background:
-              score >= 90
-                ? "#DCFCE7"
-                : "#FEF3C7",
-
-            color:
-              score >= 90
-                ? "#15803D"
-                : "#B45309",
-          }}
-        >
-          {score.toFixed(0)}%
+        <div className="flex flex-col items-end">
+         <span
+           className="px-3 py-1 rounded-full text-sm font-bold"
+           style={{
+             background: score >= 90 ? "#DCFCE7" : "#FEF3C7",
+             color: score >= 90 ? "#15803D" : "#B45309",
+           }}
+          >
+           {score.toFixed(0)}%
         </span>
+
+          <span
+           className="text-xs font-semibold mt-1"
+           style={{ color: badgeColor }}>
+             {badgeText}
+          </span>
+       </div>
+         
 
       </div>
 
@@ -625,6 +681,29 @@ const shareEmail = () => {
 
       </div>
 
+      {/* AI Match Reasons */}
+
+<div className="mt-4">
+  <p className="font-semibold text-gray-700 whitespace-nowrap">
+    🤖 AI Match Reasons
+  </p>
+
+  {reasons.length > 0 ? (
+    reasons.map((reason, index) => (
+      <p
+        key={index}
+        className="text-sm text-gray-600 mt-1"
+      >
+        ✓ {reason}
+      </p>
+    ))
+  ) : (
+    <p className="text-sm text-gray-500 mt-1">
+      Similarity based on AI semantic analysis.
+    </p>
+  )}
+</div>
+
       <div
         className="mt-4 flex justify-between items-center"
       >
@@ -637,6 +716,8 @@ const shareEmail = () => {
         >
           📍 {match.item.location?.name}
         </div>
+
+        
 
         <Link
           to={`/item/${match.item._id}`}

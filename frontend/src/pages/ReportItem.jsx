@@ -407,15 +407,15 @@ function Step1({ form, setForm,errors,setErrors }) {
             {COLORS.map((c) => (
               <motion.button key={c.label} type="button" title={c.label}
                 whileHover={{ scale:1.15 }} whileTap={{ scale:0.95 }}
-                onClick={() => setForm({ ...form, primaryColor:c.hex, colorLabel:c.label })}
+                onClick={() => setForm({ ...form, primaryColor:c.label })}
                 className="w-7 h-7 rounded-full transition-all duration-150"
                 style={{
                   background:c.hex,
                   border: c.border ? "1.5px solid #E5E7EB" : "none",
-                  boxShadow: form.primaryColor===c.hex
+                  boxShadow: form.primaryColor===c.label
                     ? `0 0 0 3px white, 0 0 0 5px #5BE63A`
                     : "0 1px 3px rgba(0,0,0,0.15)",
-                  transform: form.primaryColor===c.hex ? "scale(1.15)" : "scale(1)",
+                  transform: form.primaryColor===c.label ? "scale(1.15)" : "scale(1)",
                 }}/>
             ))}
           </div>
