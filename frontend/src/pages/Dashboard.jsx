@@ -669,7 +669,7 @@ function DashboardContent({ search }) {
               </div>
               <div style={{ background: "#1B3A2F" }}>
                 {aiMatches.map((alert, i) => (
-                  <motion.div key={alert.id}
+                  <motion.div key={alert._id}
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.1 + 0.3 }}
                     className="px-5 py-4 transition-colors duration-150"
                     style={{ borderTop: i > 0 ? "1px solid rgba(255,255,255,0.06)" : "" }}
@@ -688,7 +688,7 @@ function DashboardContent({ search }) {
                       <motion.button
                         whileHover={{ y: -1 }}
                         whileTap={{ scale: 0.96 }}
-                        onClick={() => navigate(`/item/${alert.matchedItem._id}`)}
+                        onClick={() => {if (alert.matchedItem?._id) {navigate(`/item/${alert.matchedItem._id}`);}}}
                         className="flex-1 text-[11.5px] font-semibold py-2 rounded-xl"
                         style={{background: "#5BE63A",color: "#1B3A2F",}}>
                         View Match

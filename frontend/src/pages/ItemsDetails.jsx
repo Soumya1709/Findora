@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getItemById, getSimilarItems,getAIMatches} from "../services/itemService";
+import { getItemById, getSimilarItems,getAIMatches,markItemReturned} from "../services/itemService";
 import { createClaim, checkCanViewOwner } from "../services/claimService";
 import NotificationBell from "../components/NotificationBell";
 import { Link } from "react-router-dom";
@@ -198,6 +198,7 @@ export default function ItemsDetails() {
   const [loadingMatches, setLoadingMatches] = useState(true);
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
 
   useEffect(() => { fetchItem(); }, [id]);
 
@@ -291,6 +292,31 @@ export default function ItemsDetails() {
       toast.error(error.response?.data?.message || "Failed to create claim");
     }
   };
+
+  const handleMarkReturned = async () => {
+  try {
+    await markItemReturned(item._id);
+
+    toast.success("Item marked as returned!");
+
+    
+    setItem((prev) => ({
+      ...prev,
+      status: "returned",
+    }));
+
+    
+    fetchItem();
+
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to update item."
+    );
+  }
+};
   const shareUrl = window.location.href;
 
   const copyLink = async () => {
@@ -360,20 +386,53 @@ const shareEmail = () => {
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]"
               style={{ background: "#EEF3E8", border: "1px solid #E5E7EB" }}>
               {item?.images?.length ? (
-                <img src={item.images[0]} alt={item.title} className="w-full h-full object-cover" />
+                <img src={item.images[0]} alt={item.title} className="w-full h-full object-cover rounded-xl" />
               ) : (
                 <LaptopSVG className="w-full h-full" />
               )}
               {/* Status badge */}
-              <span className="absolute top-3 left-3 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 capitalize"
-                style={{
-                  background: isFound ? "#D4F7C5" : "#FEF3C7",
-                  color: isFound ? "#1B3A2F" : "#92400E",
-                  border: `1px solid ${isFound ? "#A3E890" : "#FDE68A"}`,
-                }}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: isFound ? "#5BE63A" : "#F59E0B" }} />
-                {item?.type}
-              </span>
+              {/* Status Badge */}
+<span
+  className="absolute top-3 left-3 text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 capitalize"
+  style={{
+    background:
+      item.status === "returned"
+        ? "#DCFCE7"
+        : isFound
+        ? "#D4F7C5"
+        : "#FEF3C7",
+
+    color:
+      item.status === "returned"
+        ? "#15803D"
+        : isFound
+        ? "#1B3A2F"
+        : "#92400E",
+
+    border:
+      item.status === "returned"
+        ? "1px solid #BBF7D0"
+        : `1px solid ${
+            isFound ? "#A3E890" : "#FDE68A"
+          }`,
+  }}
+>
+  <span
+    className="w-1.5 h-1.5 rounded-full"
+    style={{
+      background:
+        item.status === "returned"
+          ? "#16A34A"
+          : isFound
+          ? "#5BE63A"
+          : "#F59E0B",
+    }}
+  />
+
+  {item.status === "returned"
+    ? "Returned"
+    : item.type}
+</span>
             </div>
 
             <motion.div
@@ -550,21 +609,25 @@ if (
           return (
 
             <motion.div
-        key={match.item._id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.35,
-          delay: index * 0.1,
-        }}
-      >
+  key={match.item._id}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  whileHover={{
+    y: -5,
+    scale: 1.01,
+  }}
+  transition={{
+    duration: 0.35,
+    delay: index * 0.1,
+  }}
+>
 
             <div
-  key={match.item._id}
-  className="rounded-2xl overflow-hidden"
+  className="rounded-2xl overflow-hidden transition-shadow duration-300"
   style={{
     border: "1px solid #E5E7EB",
     background: "#fff",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
   }}
 >
 
@@ -573,7 +636,7 @@ if (
     {/* IMAGE */}
 
     <div
-  className="w-32 h-32"
+  className="w-32 h-32 rounded-xl overflow-hidden"
   style={{
     background: "#F9FAFB",
   }}
@@ -684,24 +747,107 @@ if (
       {/* AI Match Reasons */}
 
 <div className="mt-4">
-  <p className="font-semibold text-gray-700 whitespace-nowrap">
+
+  <p className="font-semibold text-gray-700 mb-2">
     🤖 AI Match Reasons
   </p>
 
   {reasons.length > 0 ? (
-    reasons.map((reason, index) => (
-      <p
-        key={index}
-        className="text-sm text-gray-600 mt-1"
-      >
-        ✓ {reason}
-      </p>
-    ))
+    <div className="flex flex-wrap gap-2">
+
+      {reasons.map((reason, index) => {
+
+        let bg = "#EEF2FF";
+        let color = "#4338CA";
+
+        if (reason.includes("Category")) {
+          bg = "#DCFCE7";
+          color = "#15803D";
+        }
+
+        else if (reason.includes("Color")) {
+          bg = "#DBEAFE";
+          color = "#1D4ED8";
+        }
+
+        else if (reason.includes("Location")) {
+          bg = "#FCE7F3";
+          color = "#BE185D";
+        }
+
+        else if (reason.includes("Brand")) {
+          bg = "#FEF3C7";
+          color = "#B45309";
+        }
+
+        return (
+
+          <span
+            key={index}
+            className="px-3 py-1 rounded-full text-xs font-semibold"
+            style={{
+              background: bg,
+              color: color,
+            }}
+          >
+            {reason}
+          </span>
+
+        );
+
+      })}
+
+    </div>
   ) : (
-    <p className="text-sm text-gray-500 mt-1">
-      Similarity based on AI semantic analysis.
-    </p>
+
+    <div
+      className="text-sm rounded-lg px-3 py-2"
+      style={{
+        background: "#F3F4F6",
+        color: "#6B7280",
+      }}
+    >
+      AI matched this item using semantic similarity.
+    </div>
+
   )}
+
+</div>
+
+{/* AI Confidence */}
+
+<div
+  className="mt-4 rounded-xl px-4 py-3"
+  style={{
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0",
+  }}
+>
+  <div className="flex items-center gap-2 mb-2">
+    <span>🧠</span>
+    <span className="font-semibold text-sm">
+      AI Confidence
+    </span>
+  </div>
+
+  <p className="text-sm text-gray-600">
+    This match has a
+    <span
+      className="font-semibold"
+      style={{ color: badgeColor }}
+    >
+      {" "}
+      {
+      score >= 90
+  ? "high confidence"
+  : score >= 80
+  ? "strong confidence"
+  : "moderate confidence"
+      }
+    </span>{" "}
+    based on semantic similarity of title,
+    description, category, color and location.
+  </p>
 </div>
 
       <div
@@ -709,14 +855,14 @@ if (
       >
 
         <div
-          className="text-sm"
-          style={{
-            color: "#667085",
-          }}
-        >
-          📍 {match.item.location?.name}
-        </div>
-
+  className="flex items-center gap-2 text-sm"
+  style={{
+    color: "#667085",
+  }}
+>
+  <span className="text-base">📍</span>
+  <span>{match.item.location?.name}</span>
+</div>
         
 
         <Link
@@ -727,7 +873,7 @@ if (
             color: "#1B3A2F",
           }}
         >
-          View Item →
+          View Details →
         </Link>
 
       </div>
@@ -810,6 +956,41 @@ if (
               </motion.button>
             )}
 
+            {/* Mark as Returned - Only Report Owner */}
+
+            {item.reportedBy?._id === user.id && (
+
+  item.status === "active" ? (
+
+    <motion.button
+      onClick={() => setShowReturnModal(true)}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.97 }}
+      className="w-full mt-3 py-3 rounded-xl text-[13px] font-bold"
+      style={{
+        background: "#16A34A",
+        color: "white",
+      }}
+    >
+      ✓ Mark as Returned
+    </motion.button>
+
+  ) : (
+
+    <div
+      className="w-full mt-3 py-3 rounded-xl text-center font-bold"
+      style={{
+        background: "#DCFCE7",
+        color: "#15803D",
+        border: "1px solid #BBF7D0",
+      }}
+    >
+      ✅ Item Successfully Returned
+    </div>
+
+  )
+
+)}
             {/* Share button */}
             <motion.button onClick={() => setShowShareModal(true)} whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
               className="w-full mt-2.5 py-2.5 rounded-xl text-[13px] font-medium flex items-center justify-center gap-2 transition-all duration-150"
@@ -1027,6 +1208,77 @@ if (
 
       </motion.div>
     </>
+  )}
+</AnimatePresence>
+
+<AnimatePresence>
+  {showReturnModal && (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white rounded-3xl p-7 w-[90%] max-w-md"
+      >
+        <div className="text-center">
+
+          <div
+            className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-4xl"
+            style={{
+              background: "#DCFCE7",
+            }}
+          >
+            ✅
+          </div>
+
+          <h2
+            className="text-xl font-bold mt-5"
+            style={{ color: "#1B3A2F" }}
+          >
+            Mark Item as Returned?
+          </h2>
+
+          <p
+            className="mt-3 text-sm"
+            style={{ color: "#667085" }}
+          >
+            Once confirmed, this report will be marked as
+            returned and removed from active matching.
+          </p>
+
+          <div className="flex gap-3 mt-7">
+
+            <button
+              onClick={() => setShowReturnModal(false)}
+              className="flex-1 py-3 rounded-xl border"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={async () => {
+                await handleMarkReturned();
+                setShowReturnModal(false);
+              }}
+              className="flex-1 py-3 rounded-xl font-semibold"
+              style={{
+                background: "#16A34A",
+                color: "white",
+              }}
+            >
+              Yes, Return
+            </button>
+
+          </div>
+
+        </div>
+      </motion.div>
+    </motion.div>
   )}
 </AnimatePresence>
 

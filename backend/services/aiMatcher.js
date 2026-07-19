@@ -10,7 +10,9 @@ export async function findBestMatches(newItem) {
   const oppositeType = newItem.type === "lost" ? "found" : "lost";
 
   const candidates = await Item.find({
-    type: oppositeType,
+  type: oppositeType,
+  reportedBy: { $ne: newItem.reportedBy },
+  status: { $ne: "returned" },
   });
 
   console.log("Candidates Found:", candidates.length);
@@ -18,6 +20,19 @@ export async function findBestMatches(newItem) {
   const matches = [];
 
   for (const item of candidates) {
+
+    if (item.status === "returned") {
+      continue;
+   }
+
+    if (
+     item.reportedBy &&
+     newItem.reportedBy &&
+     item.reportedBy.toString() === newItem.reportedBy.toString()
+    ) {
+     console.log("Skipping self-reported item");
+     continue;
+    }
     const payload1 = {
       title: newItem.title,
       description: newItem.description,
@@ -49,15 +64,7 @@ export async function findBestMatches(newItem) {
           item: item._id,
           score,
         });
-         await createNotification({
-    user: newItem.reportedBy,
-    title: "🤖 AI Match Found",
-    message: `We found a ${score.toFixed(0)}% match for your reported item.`,
-    type: "ai_match",
-    item: newItem._id,
-    matchedItem: item._id,
-    matchScore: score,
-  });
+         
 
   
   await createNotification({
@@ -78,6 +85,24 @@ export async function findBestMatches(newItem) {
   }
 
   console.log("Final Matches:", matches);
+  
+matches.sort((a, b) => b.score - a.score);
 
-  return matches;
+
+const topMatches = matches.slice(0, 3);
+
+
+for (const match of topMatches) {
+  await createNotification({
+    user: newItem.reportedBy,
+    title: "🤖 AI Match Found",
+    message: `We found a ${match.score.toFixed(0)}% match for your reported item.`,
+    type: "ai_match",
+    item: newItem._id,
+    matchedItem: match.item,
+    matchScore: match.score,
+  });
+}
+
+  return topMatches;
 }

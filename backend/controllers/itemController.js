@@ -80,9 +80,9 @@ export const createItem = async (req, res) => {
 
 export const getAllItems = async (req, res) => {
   try {
-    const items = await Item.find()
-      .populate("reportedBy", "fullName email")
-      .sort({ createdAt: -1 });
+    const items = await Item.find({status: { $ne: "returned" },})
+    .populate("reportedBy", "fullName email")
+    .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -121,6 +121,50 @@ export const getItemById = async (req, res) => {
   }
 };
 
+export const markItemReturned = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found",
+      });
+    }
+
+    // Only the owner can mark it as returned
+    if (item.reportedBy.toString() !== req.user.userId) {
+  return res.status(403).json({
+    success: false,
+    message: "Unauthorized",
+  });
+}
+    if (item.status === "returned") {
+  return res.status(400).json({
+    success: false,
+    message: "Item is already marked as returned.",
+  });
+}
+    item.status = "returned";
+
+    await item.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Item marked as returned",
+      item,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 export const getSimilarItems = async (
   req,
   res
@@ -144,6 +188,7 @@ export const getSimilarItems = async (
   type: {
     $ne: currentItem.type,
   },
+  status: { $ne: "returned" },
 })
 .limit(4)
 .sort({ createdAt: -1 });
@@ -176,10 +221,16 @@ export const getAIMatches = async (req, res) => {
       });
     }
 
-    res.status(200).json({
-      success: true,
-      matches: item.matchedItems,
-    });
+    const filteredMatches = item.matchedItems.filter(
+  (match) =>
+    match.item &&
+    match.item.status !== "returned"
+);
+
+res.status(200).json({
+  success: true,
+  matches: filteredMatches,
+});
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -233,6 +284,13 @@ export const deleteItem = async (req, res) => {
       });
     }
 
+
+    if (item.status === "returned") {
+  return res.status(400).json({
+    success: false,
+    message: "Returned items cannot be deleted.",
+  });
+}
     await item.deleteOne();
 
     res.status(200).json({
@@ -266,6 +324,13 @@ export const updateItem = async (req, res) => {
         message: "Not authorized",
       });
     }
+
+    if (item.status === "returned") {
+  return res.status(400).json({
+    success: false,
+    message: "Returned items cannot be edited.",
+  });
+}
 
     const {
       title,

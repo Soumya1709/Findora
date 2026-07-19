@@ -55,3 +55,6 @@ export const getAIMatches = async (itemId) => {
   const res = await API.get(`/${itemId}/matches`);
   return res.data;
 };
+
+export const markItemReturned = (id) =>
+  API.patch(`/${id}/return`);
