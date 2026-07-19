@@ -21,7 +21,7 @@ const SORT_OPTIONS  = ["Newest First","Oldest First","A → Z","Z → A"];
 const STATUS_CFG = {
   found:    { bg:"#D4F7C5", text:"#166534", dot:"#5BE63A",  ring:"#A3E890"  },
   lost:     { bg:"#FEF3C7", text:"#92400E", dot:"#F59E0B",  ring:"#FDE68A"  },
-  returned: { bg:"#EFF6FF", text:"#1E40AF", dot:"#3B82F6",  ring:"#BFDBFE"  },
+  returned: {bg:"#DCFCE7",text:"#15803D",dot:"#16A34A",ring:"#BBF7D0"},
   active:   { bg:"#FEF3C7", text:"#92400E", dot:"#F59E0B",  ring:"#FDE68A"  },
   claimed:  { bg:"#F3F4F6", text:"#374151", dot:"#9CA3AF",  ring:"#E5E7EB"  },
   match:    { bg:"#F5F3FF", text:"#5B21B6", dot:"#8B5CF6",  ring:"#DDD6FE"  },
@@ -188,7 +188,15 @@ function ItemCard({ item, onDelete, onEdit }) {
         <div className="absolute inset-0" style={{ background:"linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 60%)" }}/>
         {/* Badges */}
         <div className="absolute top-2.5 left-2.5">
-          <Badge type={item.type||item.status} label={(item.type||item.status).charAt(0).toUpperCase()+(item.type||item.status).slice(1)}/>
+        <Badge
+          type={item.status === "returned" ? "returned" : item.type}
+          label={
+            item.status === "returned"
+            ? "Returned"
+            : item.type.charAt(0).toUpperCase() +
+            item.type.slice(1)
+         }
+          />
         </div>
         {item.badge && (
           <div className="absolute top-2.5 right-2.5">
@@ -220,6 +228,19 @@ function ItemCard({ item, onDelete, onEdit }) {
             <p className="text-[11.5px] truncate" style={{ color:"#9CA3AF" }}>{item.location}</p>
           </div>
         )}
+
+        {/* Returned Banner */}
+        {item.status === "returned" && (
+        <div
+          className="mt-4 rounded-xl px-3 py-2 text-sm font-semibold text-center"
+          style={{
+            background: "#DCFCE7",
+            color: "#15803D",
+            border: "1px solid #BBF7D0",
+          }}>
+         ✅ This item has been successfully returned.
+         </div>
+     )}
 
         {/* Actions */}
         <div className="flex items-center justify-between mt-4 pt-3.5" style={{ borderTop:"1px solid #F3F4F6" }}>
@@ -452,8 +473,8 @@ export default function MyReports() {
         type:            item.type,
         status:          item.status,
         img:             item.images?.[0]||"https://placehold.co/400x300",
-        canEdit:         true,
-        canDelete:       true,
+        canEdit: item.status !== "returned",
+        canDelete: item.status !== "returned",
         campusZone:      item.campusZone||"",
         locationNotes:   item.locationNotes||"",
         dateLostOrFound: item.dateLostOrFound,
