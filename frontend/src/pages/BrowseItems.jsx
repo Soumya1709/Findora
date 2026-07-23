@@ -147,7 +147,7 @@ function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex flex-col w-56 flex-shrink-0" style={{ background:"#1B3A2F" }}>
+    <aside className="hidden md:flex flex-col w-56 flex-shrink-0 sticky top-0 h-screen overflow-hidden" style={{ background:"#1B3A2F" }}>
       <div className="px-4 pt-6 pb-2">
         <p className="text-[9.5px] font-bold uppercase tracking-[1.5px]" style={{ color:"rgba(255,255,255,0.3)" }}>
           Navigate

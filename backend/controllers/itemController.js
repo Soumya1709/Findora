@@ -244,7 +244,12 @@ export const getMyItems = async (req, res) => {
   try {
     const items = await Item.find({
       reportedBy: req.user.userId,
-    }).sort({
+    })
+    .populate({
+    path: "matchedItems.item",
+    select:"title description images location type status",
+  })
+    .sort({
       createdAt: -1,
     });
 

@@ -8,13 +8,9 @@ import { toast } from "react-toastify";
 
 
 
-const MATCH_ALERTS = [
-  { id:1, item:"MacBook Case",  location:"Found at Cafe", confidence:84,
-    description:"Blue hard-shell case found on a table in the Engineering Cafe. Fits 14-inch models." },
-  { id:2, item:"Car Key Fob",   location:"Found in Gym",  confidence:72, description:null },
-];
 
-const FILTER_TABS   = ["All","Lost","Found","Electronics","Accessories","Books","Keys","Bags"];
+
+const FILTER_TABS   = ["All","Lost","Found","Returned","Electronics","Accessories","Books","Keys","Bags"];
 const SORT_OPTIONS  = ["Newest First","Oldest First","A → Z","Z → A"];
 
 /* ── STATUS CONFIG (matches Dashboard badge style) ──── */
@@ -291,51 +287,127 @@ function ItemCard({ item, onDelete, onEdit }) {
 }
 
 
-function AIMatchPanel() {
+function AIMatchPanel({ alerts }) {
+  const navigate = useNavigate();
+
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ border:"1px solid #E5E7EB" }}>
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{ border: "1px solid #E5E7EB" }}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4"
-        style={{ background:"#1B3A2F", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
+      <div
+        className="flex items-center justify-between px-5 py-4"
+        style={{
+          background: "#1B3A2F",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
         <div className="flex items-center gap-2">
-          <svg width="14" height="14" fill="none" stroke="#5BE63A" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          <svg
+            width="14"
+            height="14"
+            fill="none"
+            stroke="#5BE63A"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
           </svg>
-          <span className="text-[13.5px] font-bold text-white">AI Match Alerts</span>
+
+          <span className="text-[13.5px] font-bold text-white">
+            AI Match Alerts
+          </span>
         </div>
-        <span className="text-[10px] font-bold rounded-full px-2.5 py-0.5"
-          style={{ background:"#5BE63A", color:"#1B3A2F" }}>
-          {MATCH_ALERTS.length} new
+
+        <span
+          className="text-[10px] font-bold rounded-full px-2.5 py-0.5"
+          style={{ background: "#5BE63A", color: "#1B3A2F" }}
+        >
+          {alerts.length} new
         </span>
       </div>
 
       {/* Alerts */}
-      <div style={{ background:"#1B3A2F" }}>
-        {MATCH_ALERTS.map((alert,i)=>(
-          <motion.div key={alert.id}
-            initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:i*0.1+0.2 }}
-            className="px-5 py-4 transition-colors duration-150"
-            style={{ borderTop:i>0?"1px solid rgba(255,255,255,0.06)":"" }}
-            onMouseEnter={e=>e.currentTarget.style.background="#234D3D"}
-            onMouseLeave={e=>e.currentTarget.style.background=""}>
-            <div className="flex items-start gap-3">
-              <ConfidenceRing value={alert.confidence}/>
-              <div className="flex-1 min-w-0">
-                <p className="text-[12.5px] font-bold text-white truncate">{alert.item}</p>
-                <p className="text-[11px] mt-0.5" style={{ color:"rgba(255,255,255,0.45)" }}>{alert.location}</p>
-                {alert.description && (
-                  <p className="text-[11px] mt-2 leading-relaxed line-clamp-2 italic"
-                    style={{ color:"rgba(255,255,255,0.4)" }}>"{alert.description}"</p>
-                )}
+      <div style={{ background: "#1B3A2F" }}>
+        {alerts.length === 0 ? (
+          <div className="px-5 py-8 text-center">
+            <p
+              className="text-sm"
+              style={{ color: "rgba(255,255,255,0.45)" }}
+            >
+              No AI matches yet.
+            </p>
+          </div>
+        ) : (
+          alerts.map((alert, i) => (
+            <motion.div
+              key={alert.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: i * 0.1 + 0.2 }}
+              className="px-5 py-4 transition-colors duration-150"
+              style={{
+                borderTop:
+                  i > 0
+                    ? "1px solid rgba(255,255,255,0.06)"
+                    : "",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "#234D3D")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "")
+              }
+            >
+              <div className="flex items-start gap-3">
+                <ConfidenceRing value={alert.confidence} />
+
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12.5px] font-bold text-white truncate">
+                    {alert.item}
+                  </p>
+
+                  <p
+                    className="text-[11px] mt-0.5"
+                    style={{ color: "rgba(255,255,255,0.45)" }}
+                  >
+                    {alert.location}
+                  </p>
+
+                  {alert.description && (
+                    <p
+                      className="text-[11px] mt-2 leading-relaxed line-clamp-2 italic"
+                      style={{ color: "rgba(255,255,255,0.4)" }}
+                    >
+                      "{alert.description}"
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-            <motion.button whileHover={{ y:-1, boxShadow:"0 4px 12px rgba(91,230,58,0.3)" }} whileTap={{ scale:0.97 }}
-              className="mt-3.5 w-full text-[11.5px] font-bold py-2.5 rounded-xl transition-all duration-150"
-              style={{ background:"#5BE63A", color:"#1B3A2F" }}>
-              View Match
-            </motion.button>
-          </motion.div>
-        ))}
+
+              <motion.button
+                onClick={() => navigate(`/item/${alert.matchId}`)}
+                whileHover={{
+                  y: -1,
+                  boxShadow: "0 4px 12px rgba(91,230,58,0.3)",
+                }}
+                whileTap={{ scale: 0.97 }}
+                className="mt-3.5 w-full text-[11.5px] font-bold py-2.5 rounded-xl transition-all duration-150"
+                style={{
+                  background: "#5BE63A",
+                  color: "#1B3A2F",
+                }}
+              >
+                View Match
+              </motion.button>
+            </motion.div>
+          ))
+        )}
       </div>
 
       {/* Footer */}
@@ -409,6 +481,7 @@ function Footer() {
 
 export default function MyReports() {
   const [reports,      setReports]      = useState([]);
+  const [aiMatches, setAiMatches] = useState([]);
   const [editingItem,  setEditingItem]  = useState(null);
   const [loading,      setLoading]      = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
@@ -423,7 +496,7 @@ export default function MyReports() {
   const totalReports  = reports.length;
   const activeReports = reports.filter((i)=>i.status==="active").length;
   const returnedItems = reports.filter((i)=>i.status==="returned").length;
-  const matchAlerts   = 0;
+  const matchAlerts   = aiMatches.length;
 
   const STATS = [
     { label:"Total Reports",  value:totalReports,  accent:"#F59E0B", bg:"#FFFBEB", iconColor:"#F59E0B",
@@ -483,6 +556,30 @@ export default function MyReports() {
                            : "",
       }));
       setReports(transformed);
+        const alerts = [];
+
+  res.data.items.forEach((report) => {
+    report.matchedItems?.forEach((match) => {
+      if (!match.item) return;
+
+      alerts.push({
+        id: `${report._id}-${match.item._id}`,
+        reportId: report._id,
+        matchId: match.item._id,
+
+        item: match.item.title,
+        location: match.item.location?.name || "Unknown",
+
+        confidence: Math.round(match.score),
+
+        description: match.item.description,
+      });
+    });
+  });
+
+  alerts.sort((a, b) => b.confidence - a.confidence);
+
+  setAiMatches(alerts);
     } catch (error) {
       console.error(error);
     } finally {
@@ -498,6 +595,7 @@ export default function MyReports() {
     if(activeFilter==="All")   return matchSearch;
     if(activeFilter==="Lost")  return r.type==="lost"  && matchSearch;
     if(activeFilter==="Found") return r.type==="found" && matchSearch;
+    if (activeFilter === "Returned") return r.status === "returned" && matchSearch;
     return r.category===activeFilter && matchSearch;
   });
 
@@ -707,7 +805,7 @@ export default function MyReports() {
           {/* AI Match Panel */}
           <motion.div initial={{ opacity:0,x:12 }} animate={{ opacity:1,x:0 }} transition={{ duration:0.35,delay:0.15 }}
             className="w-full lg:w-72 flex-shrink-0">
-            <AIMatchPanel/>
+            <AIMatchPanel alerts={aiMatches}/>
           </motion.div>
         </div>
       </main>

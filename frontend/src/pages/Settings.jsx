@@ -69,15 +69,18 @@ function PasswordStrength({ password }) {
 /* ── TOGGLE SWITCH ──────────────────────────────────── */
 function Toggle({ checked, onChange }) {
   return (
-    <motion.button type="button" onClick={() => onChange(!checked)}
-      whileTap={{ scale: 0.93 }}
-      className="relative w-11 h-6 rounded-full flex-shrink-0 transition-colors duration-200 outline-none"
-      style={{ background: checked ? "#5BE63A" : "#E5E7EB" }}>
-      <motion.span
-        animate={{ x: checked ? 20 : 2 }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"/>
-    </motion.button>
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only peer"/>
+      <motion.div
+        animate={{ background: checked ? "#5BE63A" : "#E5E7EB" }}
+        transition={{ duration: 0.2 }}
+        className="relative w-14 h-7 rounded-full peer-focus:outline-none">
+        <motion.span
+          animate={{ x: checked ? 28 : 3 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full shadow-md"/>
+      </motion.div>
+    </label>
   );
 }
 
@@ -439,7 +442,7 @@ function SecurityTab({ user, onDeleteAccount }) {
 }
 
 
-function PrivacyTab({ form, setForm }) {
+function PrivacyTab({ form, user }) {
   const [notifications, setNotifications] = useState({
     matchAlerts:      true,
     claimUpdates:     true,
@@ -450,10 +453,13 @@ function PrivacyTab({ form, setForm }) {
   const [showPhoneModal,  setShowPhoneModal]  = useState(false);
 
   const handleContactPref = (val) => {
-    if (val === "phone" && !form.phone) {
-      setShowPhoneModal(true);
-      return;
-    }
+    if (
+    val === "phone" &&
+    !/^[6-9]\d{9}$/.test(user?.phoneNumber || "")
+) {
+    setShowPhoneModal(true);
+    return;
+}
     setContactPref(val);
   };
 
@@ -465,7 +471,6 @@ function PrivacyTab({ form, setForm }) {
   ];
 
   const contactOptions = [
-    
     { value: "email",  label: "Email",
       icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> },
     { value: "phone",  label: "Phone",
@@ -518,14 +523,14 @@ function PrivacyTab({ form, setForm }) {
               const active = contactPref === value;
               return (
                 <motion.button key={value} type="button"
-                  whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}
+                  whileHover={{ y: active ? 0 : -2 }} whileTap={{ scale: 0.97 }}
                   onClick={() => handleContactPref(value)}
-                  className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-xl transition-all duration-150"
+                  className="flex flex-col items-center gap-2.5 py-4 px-3 rounded-xl transition-all duration-200"
                   style={{
                     background:   active ? "#F0FDF4" : "#F8FAF8",
-                    border:       `1.5px solid ${active ? "#5BE63A" : "#E5E7EB"}`,
+                    border:       `2px solid ${active ? "#5BE63A" : "#E5E7EB"}`,
                     color:        active ? "#1B3A2F" : "#667085",
-                    boxShadow:    active ? "0 2px 8px rgba(91,230,58,0.15)" : "none",
+                    boxShadow:    active ? "0 4px 12px rgba(91,230,58,0.2)" : "0 1px 3px rgba(0,0,0,0.04)",
                   }}>
                   <span style={{ color: active ? "#5BE63A" : "#9CA3AF" }}>{icon}</span>
                   <span className="text-[12.5px] font-semibold">{label}</span>
@@ -623,14 +628,32 @@ export default function Settings() {
   }, []);
 
   const handleChange = (field) => (e) => {
-    setForm((f) => ({ ...f, [field]: e.target.value }));
-    setSaved(false);
-  };
+  let value = e.target.value;
+
+  if (field === "phone") {
+    value = value.replace(/\D/g, ""); // Only digits
+    if (value.length > 10) return;    // Max 10 digits
+  }
+
+  setForm((f) => ({
+    ...f,
+    [field]: value,
+  }));
+
+  setSaved(false);
+};
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
       const res = await updateProfile({ fullName: form.fullName, phoneNumber: form.phone, studentId: form.studentId });
+        if (
+      form.phone &&
+      !/^[6-9]\d{9}$/.test(form.phone)
+  ) {
+      toast.error("Please enter a valid 10-digit phone number.");
+      return;
+  }
       localStorage.setItem("user", JSON.stringify(res.data.user));
       setSaved(true);
     } catch (error) {
@@ -860,7 +883,7 @@ export default function Settings() {
 
             {/* ── PRIVACY TAB ──────────────────────── */}
             {activeTab === "Privacy" && (
-              <PrivacyTab form={form} setForm={setForm}/>
+              <PrivacyTab form={form} user={user}/>
             )}
           </motion.div>
         </div>
