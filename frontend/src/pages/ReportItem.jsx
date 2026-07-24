@@ -26,9 +26,9 @@ const COLORS = [
 ];
 
 const CAMPUS_ZONES = [
-  "Main Library Plaza","Science Block","Engineering Building",
-  "North Campus","South Campus","Gym / Sports Complex",
-  "Student Union","Cafeteria","Parking Lot","Dormitories",
+  "Campus 1 & 6 (Engineering and Technology)","Campus 3 (Architecture and Planning)","Campus 5 (KIIT School of Management)",
+  "Campus 7 (School of Law)","Central Library","Gym / Sports Complex",
+  "Student Playing Area","Cafeteria","Parking Campus 25","Campus 25 (School of Computer Science and Engineering)","Campus 17","Campus 8 (KIIT School of Mechanical Engineering)"
 ];
 
 const STEPS = ["General Details","Location & Time","Photos & Contact"];
@@ -467,26 +467,6 @@ function Step2({ form, setForm, errors, setErrors }) {
           <svg className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" width="14" height="14" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
           </svg>
-        </div>
-      </motion.div>
-
-      {/* Map placeholder */}
-      <motion.div variants={fadeUp}>
-        <label className={labelCls}>Pin on Map</label>
-        <div className="w-full h-44 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer group transition-all duration-150"
-          style={{ background:"#F8FAF8", borderColor:"#C9DFC0" }}
-          onMouseEnter={e=>{ e.currentTarget.style.borderColor="#5BE63A"; e.currentTarget.style.background="#F0FDF4"; }}
-          onMouseLeave={e=>{ e.currentTarget.style.borderColor="#C9DFC0"; e.currentTarget.style.background="#F8FAF8"; }}>
-          <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm transition-transform duration-150 group-hover:scale-110"
-            style={{ border:"1px solid #E5E7EB" }}>
-            <svg width="20" height="20" fill="none" stroke="#5BE63A" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </div>
-          <p className="text-[12.5px] font-semibold" style={{ color:"#5BE63A" }}>Click to drop a pin on campus map</p>
-          <p className="text-[11px]" style={{ color:"#9CA3AF" }}>Interactive map integration</p>
         </div>
       </motion.div>
 
