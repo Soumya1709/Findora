@@ -23,8 +23,7 @@ const NAV_ITEMS = [
     icon:<svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> },
   { label:"My Reports",  path:"/my-reports",
     icon:<svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> },
-  { label:"Match Alerts", path:"/match-alerts",
-    icon:<svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> },
+ 
 ];
 
 /* ── ANIMATION VARIANTS ─────────────────────────────── */
@@ -66,11 +65,11 @@ function Topbar() {
 
       {/* Nav */}
       <nav className="hidden md:flex items-center gap-1">
-        {["Browse","Report","Matching"].map((l)=>{
+        {["Browse","Report","Home"].map((l)=>{
           const active = l==="Browse";
           return (
             <button key={l}
-              onClick={()=>{ if(l==="Browse") navigate("/browse"); else if(l==="Report") navigate("/report"); else navigate("/matching"); }}
+              onClick={()=>{ if(l==="Browse") navigate("/browse"); else if(l==="Report") navigate("/report"); else navigate("/dashboard"); }}
               className="px-3.5 py-2 rounded-xl text-[13px] transition-all duration-150"
               style={{ background:active?"rgba(91,230,58,0.1)":"transparent", color:active?"#1B3A2F":"#667085", fontWeight:active?700:500 }}
               onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background="#F0FDF4"; e.currentTarget.style.color="#1B3A2F"; } }}
@@ -138,16 +137,19 @@ function Topbar() {
    ══════════════════════════════════════════════════════ */
 function Sidebar() {
   const [active, setActive] = useState("Browse Items");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
   const handleLogout = () => {
-    if (!window.confirm("Are you sure you want to log out?")) return;
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/", { replace:true });
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  toast.success("Logged out successfully!");
+
+  navigate("/", { replace: true });
+};
 
   return (
-    <aside className="hidden md:flex flex-col w-56 flex-shrink-0 sticky top-0 h-screen overflow-hidden" style={{ background:"#1B3A2F" }}>
+    <aside  className="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-56 flex-col z-30"style={{ background:"#1B3A2F" }}>
       <div className="px-4 pt-6 pb-2">
         <p className="text-[9.5px] font-bold uppercase tracking-[1.5px]" style={{ color:"rgba(255,255,255,0.3)" }}>
           Navigate
@@ -190,7 +192,7 @@ function Sidebar() {
           <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           Help Center
         </button>
-        <button onClick={handleLogout}
+        <button onClick={() => setShowLogoutModal(true)}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors duration-150"
           style={{ color:"#f87171" }}
           onMouseEnter={e=>{ e.currentTarget.style.background="rgba(248,113,113,0.08)"; }}
@@ -199,6 +201,65 @@ function Sidebar() {
           Log Out
         </button>
       </div>
+      <AnimatePresence>
+  {showLogoutModal && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{
+        background: "rgba(0,0,0,0.45)",
+        backdropFilter: "blur(8px)",
+      }}
+      onClick={() => setShowLogoutModal(false)}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl w-full max-w-sm overflow-hidden"
+        style={{
+          boxShadow: "0 24px 64px rgba(0,0,0,0.18)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-5 border-b">
+          <h3 className="text-lg font-bold text-gray-900">
+            Log Out
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Are you sure you want to log out?
+          </p>
+        </div>
+
+        <div className="px-6 py-5 flex gap-3">
+          <button
+            onClick={() => setShowLogoutModal(false)}
+            className="flex-1 py-2.5 rounded-xl border border-gray-300 font-medium"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={() => {
+              setShowLogoutModal(false);
+              handleLogout();
+            }}
+            className="flex-1 py-2.5 rounded-xl font-bold"
+            style={{
+              background: "#EF4444",
+              color: "#fff",
+            }}
+          >
+            Log Out
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </aside>
   );
 }
@@ -483,7 +544,7 @@ export default function BrowseItems() {
         <Sidebar/>
 
         {/* ── MAIN AREA ─────────────────────────────── */}
-        <div className="flex-1 flex flex-col overflow-y-auto min-w-0">
+        <div className="flex-1 flex flex-col overflow-y-auto min-w-0 ml-56">
           <main className="flex-1 px-5 sm:px-7 py-7">
 
             {/* Page heading */}

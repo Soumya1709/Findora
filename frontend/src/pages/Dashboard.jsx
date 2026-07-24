@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { getMyItems } from "../services/itemService";
 import { getNotifications, markNotificationRead } from "../services/notificationService";
+import { toast } from "react-toastify";
 
 
 
@@ -82,12 +83,15 @@ function ConfidenceRing({ value }) {
 
 function Sidebar({ active, setActive, collapsed, setCollapsed }) {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleLogout = () => {
-    if (!window.confirm("Are you sure you want to log out?")) return;
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/", { replace: true });
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  toast.success("Logged out successfully!");
+
+  navigate("/", { replace: true });
+};
 
   return (
     <motion.aside
@@ -170,7 +174,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
         <div className="pt-3"/>
         {[
           { label: "Help Center", color: "rgba(255,255,255,0.55)", icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>, onClick: () => {} },
-          { label: "Log Out", color: "#f87171", icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>, onClick: handleLogout },
+          { label: "Log Out", color: "#f87171", icon: <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>, onClick: () => setShowLogoutModal(true) },
         ].map((btn) => (
           <motion.button key={btn.label} onClick={btn.onClick}
             whileHover={{ x: collapsed ? 0 : 3 }}
@@ -204,6 +208,65 @@ function Sidebar({ active, setActive, collapsed, setCollapsed }) {
           </AnimatePresence>
         </motion.button>
       </div>
+      <AnimatePresence>
+  {showLogoutModal && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{
+        background: "rgba(0,0,0,0.45)",
+        backdropFilter: "blur(8px)",
+      }}
+      onClick={() => setShowLogoutModal(false)}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl w-full max-w-sm overflow-hidden"
+        style={{
+          boxShadow: "0 24px 64px rgba(0,0,0,0.18)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-5 border-b">
+          <h3 className="text-lg font-bold text-gray-900">
+            Log Out
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Are you sure you want to log out?
+          </p>
+        </div>
+
+        <div className="px-6 py-5 flex gap-3">
+          <button
+            onClick={() => setShowLogoutModal(false)}
+            className="flex-1 py-2.5 rounded-xl border border-gray-300 font-medium"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={() => {
+              setShowLogoutModal(false);
+              handleLogout();
+            }}
+            className="flex-1 py-2.5 rounded-xl font-bold"
+            style={{
+              background: "#EF4444",
+              color: "#fff",
+            }}
+          >
+            Log Out
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </motion.aside>
   );
 }
@@ -643,8 +706,8 @@ function DashboardContent({ search }) {
                   </div>
                   <div className="rounded-xl p-3.5 text-center"
                     style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
-                    <p className="text-xl font-bold" style={{ color: "#166534" }}>{stats.recovered}</p>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "#667085" }}>Recovered</p>
+                    <p className="text-xl font-bold" style={{ color: "#166534" }}>{stats.returned}</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: "#667085" }}>Returned</p>
                   </div>
                 </div>
                 <p className="text-[11px] text-center" style={{ color: "#9CA3AF" }}>Member since {memberSince}</p>
