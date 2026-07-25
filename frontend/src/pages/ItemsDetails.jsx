@@ -1301,15 +1301,43 @@ if (
             </p>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1">
-            {["Privacy Policy", "Terms of Service", "Security", "Accessibility", "Support"].map((l) => (
-              <a key={l} href="#" className="text-[12px] transition-colors duration-150"
-                style={{ color: "rgba(255,255,255,0.4)" }}
-                onMouseEnter={e => e.currentTarget.style.color = "#5BE63A"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}>
-                {l}
-              </a>
-            ))}
-          </div>
+  {[
+    { label: "Privacy Policy", path: "/privacy" },
+    { label: "Terms of Service", path: "/terms" },
+    { label: "Support", path: "/support" },
+  ].map((item) => (
+    <Link
+      key={item.label}
+      to={item.path}
+      className="text-[12px] transition-colors duration-150"
+      style={{ color: "rgba(255,255,255,0.4)" }}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.color = "#5BE63A")
+      }
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.color = "rgba(255,255,255,0.4)")
+      }
+    >
+      {item.label}
+    </Link>
+  ))}
+
+  <Link
+  to="/settings?tab=Security"
+  className="text-[12px] transition-colors duration-150"
+  style={{
+    color: "rgba(255,255,255,0.4)",
+  }}
+  onMouseEnter={(e) =>
+    (e.currentTarget.style.color = "#5BE63A")
+  }
+  onMouseLeave={(e) =>
+    (e.currentTarget.style.color = "rgba(255,255,255,0.4)")
+  }
+>
+  Security
+</Link>
+</div>
         </div>
       </footer>
     </div>

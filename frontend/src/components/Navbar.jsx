@@ -11,7 +11,7 @@ export default function Navbar() {
   const isLoggedIn = !!token;
 
   const navLinks = [
-    { label: "Browse Items",    action: () => navigate(isLoggedIn ? "/dashboard" : "/login") },
+    { label: "Browse Items",    action: () => navigate(isLoggedIn ? "/browse" : "/login") },
     { label: "Report Lost",     action: () => navigate(isLoggedIn ? "/report"    : "/login") },
     { label: "Report Found",    action: () => navigate(isLoggedIn ? "/report"    : "/login") },
     { label: "Success Stories", action: () => {} },
