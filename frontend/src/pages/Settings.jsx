@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { deleteAccount } from "../services/authService";
 import NotificationBell from "../components/NotificationBell";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 /* ── SHARED STYLES ──────────────────────────────────── */
 const inputCls = `w-full px-4 py-3 text-[13.5px] rounded-xl border bg-[#F8FAF8]
@@ -191,22 +193,51 @@ function SecurityTab({ user, onDeleteAccount }) {
   const pwMatch    = pwForm.confirm.length > 0 && pwForm.newPw === pwForm.confirm;
   const pwMismatch = pwForm.confirm.length > 0 && pwForm.newPw !== pwForm.confirm;
 
-  const authMethod = user?.googleId ? "Google Login" : "Email & Password";
-  const isVerified = user?.isVerified;
+  
 
-  const metaRows = [
-    { label: "Authentication", val: authMethod,
-      icon: user?.googleId
-        ? <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        : <svg width="15" height="15" fill="none" stroke="#5BE63A" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> },
-    { label: "Account Status",
-      val: isVerified ? "Verified" : "Not Verified",
-      dot: isVerified ? "#5BE63A" : "#F59E0B" },
-    { label: "Member Since",
-      val: user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "—" },
-    { label: "Last Updated",
-      val: user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "—" },
-  ];
+  const authMethod = user?.googleId ? "Google Sign-In" : "Email & Password";
+
+const metaRows = [
+  {
+    label: "Login Method",
+    val: authMethod,
+    icon: user?.googleId ? (
+      <svg width="15" height="15" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+    ) : (
+      <svg width="15" height="15" fill="none" stroke="#5BE63A" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+        />
+      </svg>
+    ),
+  },
+  {
+    label: "Member Since",
+    val: user?.createdAt
+      ? new Date(user.createdAt).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "—",
+  },
+  {
+    label: "Email Address",
+    val: user?.email || "—",
+  },
+  {
+    label: "Student ID",
+    val: user?.studentId || "Not Added",
+  },
+];
 
   return (
     <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col gap-5">
@@ -609,9 +640,11 @@ function PrivacyTab({ form, user }) {
 
 export default function Settings() {
   const navigate  = useNavigate();
-  const [activeTab, setActiveTab] = useState("Profile");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || "Profile");
   const [form,      setForm]      = useState({ fullName: "", studentId: "", email: "", phone: "" });
   const [saved,     setSaved]     = useState(false);
+  
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -626,6 +659,20 @@ export default function Settings() {
       });
     }
   }, []);
+
+ useEffect(() => {
+  if (location.state?.activeTab) {
+    setActiveTab(location.state.activeTab);
+
+   
+    navigate(location.pathname, {
+      replace: true,
+      state: null,
+    });
+  } else {
+    setActiveTab("Profile");
+  }
+}, [location.state, navigate, location.pathname]);
 
   const handleChange = (field) => (e) => {
   let value = e.target.value;
@@ -904,15 +951,47 @@ export default function Settings() {
             <p className="text-[11.5px]" style={{ color: "rgba(255,255,255,0.3)" }}>© 2024 Findora Recovery Systems. All rights reserved.</p>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1">
-            {["Privacy Policy", "Terms of Service", "Security", "Accessibility", "Support"].map((l) => (
-              <a key={l} href="#" className="text-[12px] transition-colors duration-150"
-                style={{ color: "rgba(255,255,255,0.4)" }}
-                onMouseEnter={e => e.currentTarget.style.color = "#5BE63A"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}>
-                {l}
-              </a>
-            ))}
-          </div>
+  {[
+    { label: "Privacy Policy", path: "/privacy" },
+    { label: "Terms of Service", path: "/terms" },
+    { label: "Support", path: "/support" },
+  ].map((item) => (
+    <Link
+      key={item.label}
+      to={item.path}
+      className="text-[12px] transition-colors duration-150"
+      style={{ color: "rgba(255,255,255,0.4)" }}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.color = "#5BE63A")
+      }
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.color = "rgba(255,255,255,0.4)")
+      }
+    >
+      {item.label}
+    </Link>
+  ))}
+
+  <button
+  onClick={() => setActiveTab("Security")}
+  className="text-[12px] transition-colors duration-150"
+  style={{
+    color: "rgba(255,255,255,0.4)",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+  }}
+  onMouseEnter={(e) =>
+    (e.currentTarget.style.color = "#5BE63A")
+  }
+  onMouseLeave={(e) =>
+    (e.currentTarget.style.color = "rgba(255,255,255,0.4)")
+  }
+>
+  Security
+</button>
+</div>
         </div>
       </footer>
     </div>
