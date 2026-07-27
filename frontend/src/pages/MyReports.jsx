@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getMyItems, deleteItem } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Footer from "../components/Footer";
 
 
 
@@ -428,55 +429,6 @@ function AIMatchPanel({ alerts }) {
 }
 
 
-function Footer() {
-  return (
-    <footer className="mt-16" style={{ background:"#1B3A2F", borderTop:"1px solid rgba(255,255,255,0.06)" }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10">
-        <div className="flex flex-col md:flex-row justify-between gap-8">
-          <div className="max-w-xs">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background:"#5BE63A" }}>
-                <svg width="14" height="14" fill="none" stroke="#1B3A2F" viewBox="0 0 24 24" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-              </div>
-              <span className="font-black text-[16px] tracking-tight text-white">
-                Find<span style={{ color:"#5BE63A" }}>ora</span>
-              </span>
-            </div>
-            <p className="text-[12px] leading-relaxed" style={{ color:"rgba(255,255,255,0.4)" }}>
-              Reconnecting the campus, one item at a time. Trusted by 20+ universities.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-x-12 gap-y-6">
-            {[
-              { heading:"Product", links:["How it works","Safety Guide","Success Stories"] },
-              { heading:"Support", links:["Help Center","Contact","Report Abuse"] },
-              { heading:"Legal",   links:["Privacy Policy","Terms of Service"] },
-            ].map((col)=>(
-              <div key={col.heading} className="flex flex-col gap-2.5">
-                <span className="text-[10px] font-bold uppercase tracking-[1.2px]" style={{ color:"rgba(255,255,255,0.25)" }}>
-                  {col.heading}
-                </span>
-                {col.links.map((l)=>(
-                  <a key={l} href="#" className="text-[12.5px] transition-colors duration-150"
-                    style={{ color:"rgba(255,255,255,0.5)" }}
-                    onMouseEnter={e=>e.currentTarget.style.color="#5BE63A"}
-                    onMouseLeave={e=>e.currentTarget.style.color="rgba(255,255,255,0.5)"}>
-                    {l}
-                  </a>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mt-8 pt-6 text-center text-[11.5px]" style={{ borderTop:"1px solid rgba(255,255,255,0.06)", color:"rgba(255,255,255,0.25)" }}>
-          © 2024 Findora Recovery Systems. All rights reserved.
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 
 export default function MyReports() {
