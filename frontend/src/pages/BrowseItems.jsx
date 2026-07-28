@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllItems } from "../services/itemService";
+import { getAllItems,markMatchSeen } from "../services/itemService";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../components/NotificationBell";
 import { Link } from "react-router-dom";
+
 
 
 
@@ -186,12 +187,12 @@ function Sidebar() {
           style={{ background:"#5BE63A", color:"#1B3A2F" }}>
           + Report New Item
         </motion.button>
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors duration-150 mb-0.5"
+        <button onClick={() => navigate("/support")} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors duration-150 mb-0.5"
           style={{ color:"rgba(255,255,255,0.45)" }}
           onMouseEnter={e=>{ e.currentTarget.style.background="rgba(255,255,255,0.06)"; e.currentTarget.style.color="rgba(255,255,255,0.8)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.background="transparent"; e.currentTarget.style.color="rgba(255,255,255,0.45)"; }}>
           <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Help Center
+          Support & Safety
         </button>
         <button onClick={() => setShowLogoutModal(true)}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors duration-150"

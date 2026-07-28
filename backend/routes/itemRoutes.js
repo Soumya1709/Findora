@@ -9,7 +9,7 @@ import {
   getMyItems,
   deleteItem,
   updateItem,
-  getSimilarItems, getAIMatches,markItemReturned,
+  getSimilarItems, getAIMatches,markItemReturned,markMatchSeen,
 } from "../controllers/itemController.js";
 
 const router = express.Router();
@@ -32,5 +32,6 @@ router.get("/:id", getItemById);
 router.delete("/:id", authMiddleware, deleteItem);
 router.put("/:id", authMiddleware, upload.single("image"), updateItem);
 router.patch("/:id/return",authMiddleware,markItemReturned);
+router.patch("/matches/:reportId/:matchId/seen",authMiddleware,markMatchSeen);
 
 export default router;

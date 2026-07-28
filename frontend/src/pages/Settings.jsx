@@ -129,9 +129,9 @@ function Topbar({ initials }) {
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-1">
-          {["Browse", "Report", "Matching"].map((l) => (
+          {["Browse", "Report"].map((l) => (
             <button key={l}
-              onClick={() => { if (l === "Browse") navigate("/browse"); else if (l === "Report") navigate("/report"); else navigate("/matching"); }}
+              onClick={() => { if (l === "Browse") navigate("/browse"); else if (l === "Report") navigate("/report"); }}
               className="px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150" style={{ color: "#667085" }}
               onMouseEnter={e => { e.currentTarget.style.background = "#F0FDF4"; e.currentTarget.style.color = "#1B3A2F"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#667085"; }}>

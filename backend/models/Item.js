@@ -114,6 +114,10 @@ const itemSchema = new mongoose.Schema(
       ref: "Item",
     },
     score: Number,
+    seen: {
+      type: Boolean,
+      default: false,
+    },
   },
 ],
 

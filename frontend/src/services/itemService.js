@@ -58,3 +58,20 @@ export const getAIMatches = async (itemId) => {
 
 export const markItemReturned = (id) =>
   API.patch(`/${id}/return`);
+
+export const markMatchSeen = async (
+  reportId,
+  matchId
+) => {
+  const token = localStorage.getItem("token");
+
+  return axios.patch(
+    `/items/matches/${reportId}/${matchId}/seen`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

@@ -17,7 +17,9 @@ export default function NotificationBell() {
     try {
       const res = await getNotifications();
 
-      setNotifications(res.data.notifications || []);
+      // Only keep unseen (unread) notifications in local state
+      const all = res.data.notifications || [];
+      setNotifications(all.filter((n) => !n.isRead));
     } catch (err) {
       console.error(err);
     }
@@ -68,6 +70,27 @@ export default function NotificationBell() {
       console.error(err);
     }
   };
+
+  // When the dropdown is closed, mark any currently displayed (unread)
+  // notifications as read so they disappear next time.
+  useEffect(() => {
+    if (!showNotifications && notifications.length > 0) {
+      // mark each notification as read
+      (async () => {
+        try {
+          await Promise.all(
+            notifications.map((n) => markNotificationRead(n._id))
+          );
+          // clear local unread list after marking
+          setNotifications([]);
+        } catch (err) {
+          console.error(err);
+        }
+      })();
+    }
+    // only run when dropdown closes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showNotifications]);
 
   const unreadCount = notifications.filter(
     (n) => !n.isRead

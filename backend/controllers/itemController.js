@@ -413,3 +413,60 @@ export const updateItem = async (req, res) => {
     });
   }
 };
+export const markMatchSeen = async (req, res) => {
+  try {
+    const { reportId, matchId } = req.params;
+
+    const report = await Item.findById(reportId);
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found",
+      });
+    }
+
+    if (
+      report.reportedBy.toString() !==
+      req.user.userId
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    const match = report.matchedItems.find(
+      (m) => m.item.toString() === matchId
+    );
+
+    if (!match) {
+      return res.status(404).json({
+        success: false,
+        message: "Match not found",
+      });
+    }
+
+    if (match.seen) {
+      return res.status(200).json({
+        success: true,
+        message: "Match already marked as seen",
+      });
+    }
+
+    match.seen = true;
+
+    await report.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Match marked as seen",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

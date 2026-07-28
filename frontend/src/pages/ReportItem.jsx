@@ -83,14 +83,15 @@ function Topbar() {
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-1">
-          {["Browse","Report","Matching"].map((l) => {
+          {["Browse","Report","Home"].map((l) => {
             const active = l === "Report";
             return (
               <button key={l}
                 onClick={() => {
                   if(l==="Browse") navigate("/browse");
                   else if(l==="Report") navigate("/report");
-                  else navigate("/matching");
+                  else navigate("/dashboard");
+                  
                 }}
                 className="px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150"
                 style={{

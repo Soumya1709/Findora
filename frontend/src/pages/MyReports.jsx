@@ -290,6 +290,29 @@ function ItemCard({ item, onDelete, onEdit }) {
 
 function AIMatchPanel({ alerts }) {
   const navigate = useNavigate();
+  const handleViewMatch = async (alert) => {
+  await markMatchSeen(alert.reportId, alert.matchId);
+
+  setAiMatches((prev) =>
+    prev.filter((a) => a.id !== alert.id)
+  );
+
+  await markMatchSeen(
+  alert.reportId,
+  alert.matchId
+);
+
+navigate(`/item/${alert.matchId}`);
+setAiMatches((prev) =>
+  prev.filter(
+    (m) =>
+      !(
+        m.reportId === alert.reportId &&
+        m.matchId === alert.matchId
+      )
+  )
+);
+};
 
   return (
     <div
@@ -392,7 +415,7 @@ function AIMatchPanel({ alerts }) {
               </div>
 
               <motion.button
-                onClick={() => navigate(`/item/${alert.matchId}`)}
+                onClick={() => handleViewMatch(alert)}
                 whileHover={{
                   y: -1,
                   boxShadow: "0 4px 12px rgba(91,230,58,0.3)",
@@ -513,6 +536,7 @@ export default function MyReports() {
   res.data.items.forEach((report) => {
     report.matchedItems?.forEach((match) => {
       if (!match.item) return;
+      if (match.seen) return; 
 
       alerts.push({
         id: `${report._id}-${match.item._id}`,
