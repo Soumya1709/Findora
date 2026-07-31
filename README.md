@@ -170,7 +170,7 @@ Findora
 ## Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Findora.git
+git clone https://github.com/Soumya1709/Findora.git
 ```
 
 ```bash
